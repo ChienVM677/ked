@@ -1,6 +1,6 @@
 /**
- * KED - Stories Zone Module v6.0
- * Phân hệ Vườn Cổ Tích & Truyện Kể Tương Tác
+ * KED - Stories Zone Module v6.4
+ * Phân hệ Vườn Cổ Tích & Truyện Kể Tương Tác Đa Giác Quan
  */
 
 const StoriesZone = {
@@ -70,7 +70,9 @@ const StoriesZone = {
                 questBox.style.display = 'block';
                 questBox.innerHTML = `
                     <div class="story-quest-card">
-                        <div class="quest-prompt">❓ ${page.quest.prompt}</div>
+                        <div class="quest-prompt" onclick="StoriesZone.speakQuest()" style="cursor:pointer;" title="Bấm để nghe lại câu hỏi">
+                            <span class="quest-audio-icon">🔊</span> ❓ ${page.quest.prompt}
+                        </div>
                         <div class="quest-options-row">
                             ${page.quest.options.map((opt, idx) => `
                                 <button class="quest-opt-btn" onclick="StoriesZone.answerQuest(${idx})">
@@ -100,17 +102,41 @@ const StoriesZone = {
             }
         }
 
-        // Đọc câu chuyện
+        // Đọc câu chuyện & tự động hỏi câu đố sau khi đọc xong
         setTimeout(() => {
             this.speakCurrentPage();
-        }, 300);
+        }, 400);
     },
 
     speakCurrentPage() {
         const story = STORIES_DATA.find(s => s.id === this.currentStoryId) || STORIES_DATA[0];
         const page = story.pages.find(p => p.pageIndex === this.currentPageIndex);
         if (page && page.voiceText) {
-            SoundEngine.speakFallback(page.voiceText);
+            const onAudioEnd = () => {
+                if (page.quest) {
+                    setTimeout(() => {
+                        this.speakQuest();
+                    }, 600);
+                }
+            };
+            if (page.audioKey) {
+                SoundEngine.playVoice(page.audioKey, onAudioEnd, page.voiceText);
+            } else {
+                SoundEngine.speakFallback(page.voiceText, onAudioEnd);
+            }
+        }
+    },
+
+    speakQuest() {
+        const story = STORIES_DATA.find(s => s.id === this.currentStoryId) || STORIES_DATA[0];
+        const page = story.pages.find(p => p.pageIndex === this.currentPageIndex);
+        if (page && page.quest) {
+            const promptText = page.quest.audioPrompt || page.quest.prompt;
+            if (page.quest.audioKey) {
+                SoundEngine.playVoice(page.quest.audioKey, null, promptText);
+            } else {
+                SoundEngine.speakFallback(promptText);
+            }
         }
     },
 
@@ -139,13 +165,17 @@ const StoriesZone = {
         }
     },
 
-    tapElement(elemKey, textVoice) {
+    tapElement(elemKey, textVoice, audioKey = null) {
         SoundEngine.playPop();
         const hintEl = document.getElementById('story-touch-hint');
         if (hintEl) {
             hintEl.textContent = `✨ ${textVoice}`;
         }
-        SoundEngine.speakFallback(textVoice);
+        if (audioKey) {
+            SoundEngine.playVoice(audioKey, null, textVoice);
+        } else {
+            SoundEngine.speakFallback(textVoice);
+        }
     },
 
     answerQuest(optIdx) {
