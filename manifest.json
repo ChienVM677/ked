@@ -1,0 +1,24 @@
+{
+  "code": "KED",
+  "name": "KED - Bé Vui Học & Giáo Dục Sớm",
+  "version": "6.4.0",
+  "status": "🟢 Hoàn thành Tối ưu Trải nghiệm Sư phạm & Phân giải Trùng lặp (Loại bỏ toàn bộ đếm số trùng lặp trong từng menu; Triệt tiêu lặp lại 2 lần Thư viện và Tìm hình trong Vương Quốc Hình Ảnh; Thay thế toàn bộ hình ảnh trùng lặp bằng 8 Vector SVG trực quan: Bọ ngựa giương kiếm, Dế mèn nâu đen râu dài, Cào cào đùi to đầu nhọn, Sâu bướm sọc gai, Sâu xanh múp gặm lá, Cuốn chiếu vô số chân, Bướm đêm cánh mắt lông vũ, Thanh la chũm chọe vàng thau)",
+  "progress": 80,
+  "updated_at": "2026-11-07",
+  "target_audience": "Trẻ mầm non 3 - 5 tuổi (Đặc biệt phát triển tư duy sớm qua phương pháp tương tác đa giác quan)",
+  "type": "Interactive Educational Web Application",
+  "entry_point": "index.html",
+  "launcher": "run_ked.bat",
+  "features": [
+    "TRIỆT TIÊU BỘ ĐẾM TRÙNG LẶP: Đã gỡ bỏ toàn bộ chip hiển thị số câu đã chơi ở menu từng phân hệ; giữ duy nhất 1 bộ đếm trung tâm chuẩn mực trên thanh Topbar (0/200 câu).",
+    "TRIỆT TIÊU HIỂN THỊ LẶP 2 LẦN Ở VƯƠNG QUỐC HÌNH ẢNH: Gỡ bỏ dải tab trùng lặp trong khu vực điều khiển, chỉ giữ duy nhất bộ đôi nút chọn tinh gọn trên Subnav ('📖 Thư Viện Thẻ Tranh (356 Mục)' & '🔍 Bé Tìm Hình').",
+    "BỘ 8 HÌNH ẢNH VECTOR SVG ĐẶC TRƯNG MỚI (PHÂN BIỆT RÕ RÀNG 100%):",
+    "  • Bọ ngựa (xanh lá, 2 càng kiếm giương cao) vs Dế mèn (nâu đen bóng, 2 râu dài cong vút) vs Cào cào (xanh cốm, đầu nhọn hướng lên, 2 đùi sau bự gập chữ V).",
+    "  • Sâu bướm (thân sọc sặc sỡ vàng cam đen, gai mềm) vs Sâu xanh (múp míp béo ngậy gặm khuyết mép lá xanh) vs Cuốn chiếu (đỏ nâu nhiều đốt tròn, vô số chân li ti xếp đều 2 bên).",
+    "  • Bươm bướm (xòe cánh rực rỡ ban ngày) vs Bướm đêm / Ngài (cánh tam giác mái nhà nâu xám bạc có hoa văn mắt tròn bí ẩn, 2 râu xù lông vũ đặc trưng).",
+    "  • Quả chuông (chuông vàng cổ điển lắc leng keng) vs Thanh la (cặp đĩa đồng tròn dẹt kim loại vàng thau, quai vải đỏ cầm tay đập xoang xoang).",
+    "ĐIỀU HƯỚNG KÉP & MENU TINH GỌN: Phân tách rõ ràng Vương Quốc Hình Ảnh và Tư Duy Thị Giác.",
+    "KHO 1.213 TỆP ÂM THANH NEURAL OFFLINE: Chuẩn giọng cô giáo tiếng Việt Hoài My Neural ấm áp, phát âm thanh chỉ khi bé chạm tay trực tiếp."
+  ],
+  "author": "Antigravity AI Pair Programming System"
+}

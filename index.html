@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>KED - Bé Vui Học (3-5 Tuổi) | Unified Dashboard v6.0</title>
+    <!-- Google Fonts Nunito vui tươi chuẩn mầm non -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+    <!-- CSS Stylesheets -->
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- TOP NAVIGATION HEADER -->
+    <header class="ked-header">
+        <div class="brand-box" onclick="App.openZone('home')" style="cursor:pointer;" title="Về Màn Hình Tổng Quan">
+            <span class="brand-icon">🌟</span>
+            <div>
+                <div class="brand-title">KED - BÉ VUI HỌC</div>
+                <div class="brand-subtitle">Chương Trình Giáo Dục Sớm Cho Bé 3 - 5 Tuổi</div>
+            </div>
+        </div>
+
+        <!-- BỘ CHỌN CẤP ĐỘ PHÁT TRIỂN CỦA BÉ -->
+        <div class="level-selector-row" title="Chọn cấp độ phát triển phù hợp với lứa tuổi của bé">
+            <button class="level-pill-btn active" data-level="1" onclick="App.setLevel(1)">🌱 Bé Mầm (3T)</button>
+            <button class="level-pill-btn" data-level="2" onclick="App.setLevel(2)">🌿 Bé Chồi (4T)</button>
+            <button class="level-pill-btn" data-level="3" onclick="App.setLevel(3)">🌳 Bé Lá (5T)</button>
+        </div>
+
+        <div class="header-controls">
+            <!-- Nút quay về trang chủ (hiển thị khi đang ở sâu trong phân hệ) -->
+            <button class="home-nav-btn" id="btn-home-nav" onclick="App.openZone('home')" style="display:none;" title="Quay về trang chủ">
+                <span>🏠</span> <span>Trang Chủ</span>
+            </button>
+
+            <!-- Huy hiệu ngôi sao tích lũy toàn cục -->
+            <div class="header-stat-chip star-badge" title="Ngôi sao bé tích lũy được khi trả lời đúng">
+                <span>⭐</span> <span id="star-count">0</span>
+            </div>
+
+            <!-- Huy hiệu Sticker đã mở -->
+            <div class="header-stat-chip sticker-chip" onclick="TreasureZone.openStickerBook()" title="Bé chạm để mở Sổ Dán Sticker trang trí nhé!">
+                <span>🎁</span> <span id="sticker-count">0</span>
+            </div>
+
+            <!-- Bộ đếm bảo vệ mắt 200 câu -->
+            <div class="header-stat-chip" id="session-chip" title="Khóa bảo vệ mắt tự động khi chơi đủ 200 câu">
+                <span>⏳</span> <span id="header-session-count">0/200</span>
+            </div>
+
+            <!-- Nút Bật/Tắt âm thanh & Toàn màn hình -->
+            <button class="ctrl-btn" id="btn-sound-toggle" title="Âm thanh: Đang Bật">🔊</button>
+            <button class="ctrl-btn" id="btn-fullscreen" title="Toàn màn hình">⛶</button>
+        </div>
+    </header>
+
+    <!-- UNIFIED DASHBOARD LAYOUT (SIDEBAR + MAIN STAGE) -->
+    <div class="app-layout">
+        <!-- SIDEBAR NAVIGATION LỚN (>75px touch target) -->
+        <aside class="ked-sidebar">
+            <button class="sidebar-nav-btn active" data-zone="images" onclick="App.openZone('images')">
+                <span class="nav-icon">🎨</span>
+                <div class="nav-text-col">
+                    <span class="nav-main-title">Hình Ảnh</span>
+                    <span class="nav-sub-desc">356 Thẻ & Tìm hình</span>
+                </div>
+            </button>
+
+            <button class="sidebar-nav-btn" data-zone="visual" onclick="App.openZone('visual')">
+                <span class="nav-icon">👁️</span>
+                <div class="nav-text-col">
+                    <span class="nav-main-title">Tư Duy Thị Giác</span>
+                    <span class="nav-sub-desc">So sánh, phân loại & màu</span>
+                </div>
+            </button>
+
+            <button class="sidebar-nav-btn" data-zone="letters" onclick="App.openZone('letters')">
+                <span class="nav-icon">🔤</span>
+                <div class="nav-text-col">
+                    <span class="nav-main-title">Chữ Cái</span>
+                    <span class="nav-sub-desc">Đánh vần & 5 Dấu thanh</span>
+                </div>
+            </button>
+
+            <button class="sidebar-nav-btn" data-zone="numbers" onclick="App.openZone('numbers')">
+                <span class="nav-icon">🔢</span>
+                <div class="nav-text-col">
+                    <span class="nav-main-title">Con Số</span>
+                    <span class="nav-sub-desc">Toán tư duy & Bảng 100</span>
+                </div>
+            </button>
+
+            <button class="sidebar-nav-btn" data-zone="stories" onclick="App.openZone('stories')">
+                <span class="nav-icon">📖</span>
+                <div class="nav-text-col">
+                    <span class="nav-main-title">Vườn Cổ Tích</span>
+                    <span class="nav-sub-desc">Truyện kể tương tác</span>
+                </div>
+            </button>
+
+            <button class="sidebar-nav-btn nav-treasure" data-zone="treasure" onclick="App.openZone('treasure')">
+                <span class="nav-icon">🏴‍☠️</span>
+                <div class="nav-text-col">
+                    <span class="nav-main-title">Đảo Kho Báu</span>
+                    <span class="nav-sub-desc">Mở rương nhận Sticker</span>
+                </div>
+            </button>
+        </aside>
+
+        <!-- MAIN CONTENT STAGE -->
+        <main class="ked-stage">
+            <!-- ==========================================
+                 1. HOME VIEW: TỔNG QUAN 5 VƯƠNG QUỐC HỌC TẬP
+                 ========================================== -->
+            <section class="zone-view active-zone" id="view-home">
+                <div class="home-welcome-hero">
+                    <span class="hero-mascot">🦁</span>
+                    <h1 class="hero-title">Chào Mừng Bé Yêu Đến Với Đại Bản Doanh KED!</h1>
+                    <p class="hero-subtitle">Bé hãy chọn một trong các vương quốc kỳ diệu bên dưới để bắt đầu cuộc phiêu lưu nhé!</p>
+                    <div class="hero-voice-banner">
+                        <button class="voice-btn" onclick="SoundEngine.playVoice('prompt_welcome')">🔊 Nghe cô chào bé</button>
+                    </div>
+                </div>
+
+                <!-- BANNER CHẾ ĐỘ ĐẶC BIỆT: ĐẢO KHO BÁU & STICKER -->
+                <div class="special-mode-banner" style="background: linear-gradient(135deg, #fbcfe8, #fef08a); border: 4px solid #f472b6; border-radius: 24px; padding: 16px 24px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 8px 20px rgba(244, 114, 182, 0.25);">
+                    <div style="display: flex; align-items: center; gap: 14px;">
+                        <span style="font-size: 44px; animation: rotateWiggle 2s infinite;">🏴‍☠️</span>
+                        <div>
+                            <div style="font-size: 20px; font-weight: 900; color: #831843;">ĐẢO KHO BÁU & SỔ DÁN STICKER DIỆU KỲ!</div>
+                            <div style="font-size: 14px; font-weight: 800; color: #9d174d;">Lên cấp độ từng bước, mở rương nhận Sticker trang trí sau mỗi 3 câu đúng!</div>
+                        </div>
+                    </div>
+                    <button onclick="App.openZone('treasure')" style="border: none; cursor: pointer; background: linear-gradient(135deg, #ec4899, #db2777); color: #ffffff; padding: 12px 26px; border-radius: 9999px; font-size: 16px; font-weight: 900; box-shadow: 0 4px 14px rgba(219, 39, 119, 0.4); display: inline-flex; align-items: center; gap: 8px;">
+                        <span>Khám Phá Ngay</span> <span>➔</span>
+                    </button>
+                </div>
+
+                <!-- LƯỚI CÁC KHỐI HỌC TẬP CHÍNH -->
+                <div class="zones-trio-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+                    <!-- KHỐI 1: HÌNH ẢNH -->
+                    <div class="trio-card card-images" onclick="App.openZone('images')">
+                        <div class="trio-icon-badge">🎨</div>
+                        <h2 class="trio-title">VƯƠNG QUỐC HÌNH ẢNH</h2>
+                        <p class="trio-desc">356 Vật phẩm đời thường, 18 chủ đề, khám phá thư viện thẻ tranh đa giác quan và thử thách bé tìm hình!</p>
+                        <button class="trio-action-btn">Khám Phá Hình Ảnh ➔</button>
+                    </div>
+
+                    <!-- KHỐI 2: TƯ DUY THỊ GIÁC -->
+                    <div class="trio-card card-visual" onclick="App.openZone('visual')">
+                        <div class="trio-icon-badge" style="background:#eff6ff; color:#3b82f6;">👁️</div>
+                        <h2 class="trio-title" style="color: #1d4ed8;">TƯ DUY THỊ GIÁC</h2>
+                        <p class="trio-desc">110 Câu hỏi so sánh trực quan, tìm điểm khác biệt, sa bàn 3 môi trường sống và phòng pha màu ma thuật!</p>
+                        <button class="trio-action-btn" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">Rèn Luyện Tư Duy ➔</button>
+                    </div>
+
+                    <!-- KHỐI 3: CHỮ CÁI -->
+                    <div class="trio-card card-letters" onclick="App.openZone('letters')">
+                        <div class="trio-icon-badge">🔤</div>
+                        <h2 class="trio-title">CHỮ CÁI & GHÉP VẦN</h2>
+                        <p class="trio-desc">29 Chữ cái chuẩn âm, chuyến tàu ghép vần, bong bóng âm thanh và 5 dấu thanh siêu nhân!</p>
+                        <button class="trio-action-btn">Tập Đọc & Ghép Vần ➔</button>
+                    </div>
+
+                    <!-- KHỐI 4: CON SỐ -->
+                    <div class="trio-card card-numbers" onclick="App.openZone('numbers')">
+                        <div class="trio-icon-badge">🔢</div>
+                        <h2 class="trio-title">CON SỐ & TOÁN TƯ DUY</h2>
+                        <p class="trio-desc">Đếm số 1-10, Bảng 100 số kì diệu, Cân thăng bằng so sánh lượng và phép trừ trực quan làm mờ!</p>
+                        <button class="trio-action-btn">Học Đếm & Làm Toán ➔</button>
+                    </div>
+
+                    <!-- KHỐI 5: VƯỜN CỔ TÍCH -->
+                    <div class="trio-card" style="border-color: #34d399; background: #f0fdf4;" onclick="App.openZone('stories')">
+                        <div class="trio-icon-badge" style="background:#dcfce7; color:#10b981;">📖</div>
+                        <h2 class="trio-title" style="color: #047857;">VƯỜN CỔ TÍCH</h2>
+                        <p class="trio-desc">Nghe kể chuyện tương tác, tranh minh họa khổ lớn có điểm chạm phát âm thanh và câu đố vượt thử thách!</p>
+                        <button class="trio-action-btn" style="background: linear-gradient(135deg, #10b981, #059669);">Đọc Truyện Ngay ➔</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==========================================
+                 2. PHÂN HỆ 1: VƯƠNG QUỐC HÌNH ẢNH
+                 ========================================== -->
+            <section class="zone-view" id="view-images">
+                <div class="zone-header-card">
+                    <div class="zone-title-group">
+                        <h1>🎨 Vương Quốc Hình Ảnh</h1>
+                    </div>
+                    <div class="subnav-pills-row" id="images-subnav"></div>
+                </div>
+                <div id="images-content"></div>
+            </section>
+
+            <!-- ==========================================
+                 3. PHÂN HỆ 2: TƯ DUY THỊ GIÁC
+                 ========================================== -->
+            <section class="zone-view" id="view-visual">
+                <div class="zone-header-card">
+                    <div class="zone-title-group">
+                        <h1>👁️ Vương Quốc Tư Duy Thị Giác</h1>
+                    </div>
+                    <div class="subnav-pills-row" id="visual-subnav"></div>
+                </div>
+                <div id="visual-content"></div>
+            </section>
+
+            <!-- ==========================================
+                 3. PHÂN HỆ 2: CHỮ CÁI
+                 ========================================== -->
+            <section class="zone-view" id="view-letters">
+                <div class="zone-header-card">
+                    <div class="zone-title-group">
+                        <h1>🔤 Vương Quốc Chữ Cái & Ghép Vần Kỳ Thú</h1>
+                    </div>
+                    <div class="subnav-pills-row" id="letters-subnav"></div>
+                </div>
+                <div id="letters-content"></div>
+            </section>
+
+            <!-- ==========================================
+                 4. PHÂN HỆ 3: CON SỐ
+                 ========================================== -->
+            <section class="zone-view" id="view-numbers">
+                <div class="zone-header-card">
+                    <div class="zone-title-group">
+                        <h1>🔢 Vương Quốc Con Số & Toán Diệu Kỳ</h1>
+                    </div>
+                    <div class="subnav-pills-row" id="numbers-subnav"></div>
+                </div>
+                <div id="numbers-content"></div>
+            </section>
+
+            <!-- ==========================================
+                 5. PHÂN HỆ 4: VƯỜN CỔ TÍCH & TRUYỆN KỂ TƯƠNG TÁC
+                 ========================================== -->
+            <section class="zone-view" id="view-stories">
+                <div class="zone-header-card">
+                    <div class="zone-title-group">
+                        <h1 id="story-active-title">📖 Vườn Cổ Tích & Truyện Kể Tương Tác</h1>
+                    </div>
+                </div>
+
+                <div class="stories-container">
+                    <!-- THANH CHỌN TRUYỆN -->
+                    <div class="stories-list-strip" id="stories-list-strip">
+                        <!-- Nạp động qua StoriesZone -->
+                    </div>
+
+                    <!-- KHUNG TRANH MINH HỌA LỚN CÓ ĐIỂM CHẠM -->
+                    <div class="story-canvas-box" id="story-canvas-box">
+                        <!-- Nạp SVG minh họa của trang truyện -->
+                    </div>
+
+                    <!-- VĂN BẢN TRUYỆN & GỢI Ý CHẠM -->
+                    <div class="story-narrative-bar">
+                        <div class="story-sentence-text" id="story-sentence-text">
+                            Đang tải câu chuyện cho bé yêu...
+                        </div>
+                        <button class="voice-btn" onclick="StoriesZone.speakCurrentPage()" title="Bé bấm để nghe cô đọc lại câu này nhé!">
+                            🔊 Nghe lại
+                        </button>
+                    </div>
+
+                    <div class="story-touch-hint" id="story-touch-hint">
+                        💡 Bé hãy chạm vào các hình trong tranh để nghe âm thanh nhé!
+                    </div>
+
+                    <!-- KHU VỰC CÂU HỎI MINI-QUEST LỒNG TRONG TRUYỆN -->
+                    <div id="story-quest-container" style="display:none;"></div>
+
+                    <!-- NÚT ĐIỀU HƯỚNG LẬT TRANG -->
+                    <div class="story-nav-controls">
+                        <button class="story-nav-btn" id="btn-story-prev" onclick="StoriesZone.prevPage()">
+                            <span>⬅ Trang Trước</span>
+                        </button>
+                        <button class="story-nav-btn" id="btn-story-next" onclick="StoriesZone.nextPage()">
+                            <span>Trang Tiếp ➔</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==========================================
+                 6. PHÂN HỆ 5: ĐẢO KHO BÁU & STICKER (HỢP NHẤT TỪ TREASURE_GAME)
+                 ========================================== -->
+            <section class="zone-view" id="view-treasure">
+                <div class="treasure-view-container">
+                    <!-- BẢN ĐỒ TIẾN TRÌNH LÊN CẤP ĐỘ -->
+                    <div class="progression-map">
+                        <div class="island-steps">
+                            <div class="island-step-pill active" id="tg-pill-lvl-1">
+                                <span>🏝️</span> <span>Cấp 1: Thuyền Nhỏ</span>
+                            </div>
+                            <div class="island-step-pill" id="tg-pill-lvl-2">
+                                <span>🪸</span> <span>Cấp 2: Rạn San Hô</span>
+                            </div>
+                            <div class="island-step-pill" id="tg-pill-lvl-3">
+                                <span>🏰</span> <span>Cấp 3: Đảo Giấu Vàng</span>
+                            </div>
+                            <div class="island-step-pill" id="tg-pill-lvl-4">
+                                <span>👑</span> <span>Cấp 4: Đỉnh Kho Báu</span>
+                            </div>
+                        </div>
+
+                        <div class="progress-track" title="Thanh tiến trình thu thập kho báu">
+                            <div class="progress-bar-fill" id="tg-progress-bar"></div>
+                        </div>
+
+                        <div style="font-size: 14px; font-weight: 900; color: #b45309;">
+                            Rương tiếp theo: <span id="tg-streak-counter">3</span> câu đúng
+                        </div>
+
+                        <div class="stat-badge penalty-badge" id="tg-penalty-badge" style="display:none;" title="Thử thách cộng thêm khi chọn chưa đúng">
+                            <span>🔥 Thử thách:</span> +<span id="tg-val-penalty-count">0</span>
+                        </div>
+                    </div>
+
+                    <!-- THANH ĐIỀU KHIỂN & 3 CHỦ ĐỀ CHƠI (CÓ NÚT VỀ MÀN HÌNH CHỦ) -->
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
+                        <button class="btn-back-home" onclick="App.openZone('home')" style="border:none; cursor:pointer; background:linear-gradient(135deg, #0284c7, #0369a1); color:#fff; font-size:15px; font-weight:900; padding:10px 22px; border-radius:9999px; box-shadow:0 4px 12px rgba(2,132,199,0.3); display:inline-flex; align-items:center; gap:8px;">
+                            <span>🏠 Về Màn Hình Chủ</span>
+                        </button>
+                        <div class="theme-selector-bar" style="margin-bottom:0;">
+                            <button class="theme-pill-btn active" onclick="TreasureZone.switchTheme('images', this)">
+                                🎨 Tìm Kho Báu Hình Ảnh
+                            </button>
+                            <button class="theme-pill-btn" onclick="TreasureZone.switchTheme('spelling', this)">
+                                🚂 Chuyến Tàu Ghép Vần
+                            </button>
+                            <button class="theme-pill-btn" onclick="TreasureZone.switchTheme('math', this)">
+                                🔢 Bậc Thang Số Học
+                            </button>
+                        </div>
+                    </div>
+                            🔢 Bậc Thang Số Học
+                        </button>
+                    </div>
+
+                    <!-- KHỐI CÂU HỎI TRUNG TÂM -->
+                    <div class="question-card-stage">
+                        <!-- HEADER CÂU HỎI & NÚT LOA KHỔNG LỒ -->
+                        <div class="question-banner">
+                            <button class="giant-speaker-btn" onclick="TreasureZone.speakCurrentQuestion()" title="Bé bấm để nghe lại cô đọc nhé!">
+                                <span class="speaker-symbol">🔊</span>
+                                <span>BÉ BẤM NGHE LẠI</span>
+                            </button>
+
+                            <div class="question-prompt-text" id="tg-question-text">
+                                Đang nạp câu hỏi cho bé yêu...
+                            </div>
+                        </div>
+
+                        <!-- LƯỚI NÚT LỰA CHỌN CỰC LỚN (>70px touch target) -->
+                        <div class="choices-grid-giant" id="tg-choices-container">
+                            <!-- Nạp tự động qua TreasureZone -->
+                        </div>
+
+                        <!-- THANH PHẢN HỒI THÂN THIỆN -->
+                        <div class="feedback-banner" id="tg-feedback-banner">
+                            👆 Bé hãy lắng nghe và chạm vào bức tranh đúng nhé!
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- POPUP RƯƠNG KHO BÁU TẶNG STICKER (MỖI 3 CÂU ĐÚNG) -->
+    <div class="reward-popup-overlay" id="reward-popup">
+        <div class="reward-popup-card">
+            <div class="chest-svg-box">🎁</div>
+            <h2 class="reward-title">HOAN HÔ BÉ YÊU!</h2>
+            <p style="font-size: 16px; font-weight: 800; color: #64748b;">
+                Bé đã trả lời đúng 3 câu liên tiếp và mở khóa được 1 Sticker siêu dễ thương:
+            </p>
+            <div class="reward-sticker-badge" id="popup-sticker-icon">🦄</div>
+            <div class="reward-sticker-name" id="popup-sticker-name">Kỳ Lân Cầu Vồng</div>
+            <button class="btn-claim-reward" onclick="TreasureZone.claimStickerReward()">
+                Dán Vào Sổ Ngay ➔
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL SỔ DÁN STICKER TRANG TRÍ (STICKER BOOK) -->
+    <div class="sticker-modal-overlay" id="sticker-modal">
+        <div class="sticker-modal-box">
+            <div class="sticker-modal-header">
+                <h2>📖 SỔ DÁN STICKER CỦA BÉ</h2>
+                <button class="close-modal-btn" onclick="TreasureZone.closeStickerBook()">✕</button>
+            </div>
+
+            <!-- BẢNG KHUNG CẢNH TRANG TRÍ -->
+            <div class="sticker-canvas-area canvas-bg-beach" id="sticker-canvas" onclick="TreasureZone.placeStickerOnCanvas(event)" title="Chạm vào khung cảnh để dán Sticker nhé!">
+                <!-- Sticker dán sẽ xuất hiện ở đây -->
+            </div>
+
+            <!-- THANH CHỨA STICKER ĐÃ THU THẬP ĐƯỢC -->
+            <div class="sticker-inventory-row" id="inventory-strip">
+                <span class="inventory-label">Sticker của bé:</span>
+            </div>
+
+            <!-- FOOTER CHỌN HÌNH NỀN VÀ TRỞ LẠI CHƠI TIẾP -->
+            <div class="sticker-modal-footer">
+                <div class="bg-choice-btns">
+                    <span style="font-size: 13px; font-weight: 800; color:#64748b; margin-right:4px;">Đổi cảnh:</span>
+                    <button class="bg-pill-btn active" onclick="TreasureZone.changeCanvasBg('beach', this)">🏖️ Bãi Biển</button>
+                    <button class="bg-pill-btn" onclick="TreasureZone.changeCanvasBg('forest', this)">🌳 Rừng Xanh</button>
+                    <button class="bg-pill-btn" onclick="TreasureZone.changeCanvasBg('space', this)">🌌 Vũ Trụ</button>
+                </div>
+                <button class="btn-claim-reward" style="padding: 10px 24px; font-size: 16px;" onclick="TreasureZone.closeStickerBook()">
+                    Tiếp Tục Chơi Đố Vui ➔
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL KHÓA MÀN HÌNH BẢO VỆ MẮT BÉ 200 CÂU & CỔNG PHỤ HUYNH -->
+    <div id="screentime-lock-modal" class="screentime-lock-overlay">
+        <div class="lock-modal-card">
+            <div class="lock-mascot-animation">😴🧸</div>
+            <h2 class="lock-title">BÉ ĐÃ CHƠI 200 CÂU RỒI ĐẤY!</h2>
+            <p class="lock-desc">Đôi mắt sáng của bé cần được nghỉ ngơi 15 phút nhé. Hãy cùng ba mẹ vươn vai và nhìn ra ngoài cửa sổ nào!</p>
+            
+            <div class="parent-gate-box">
+                <div class="parent-gate-title">🔒 DÀNH CHO PHỤ HUYNH MỞ KHÓA</div>
+                <div class="parent-math-problem" id="parent-math-display">12 + 7 = ?</div>
+                <div style="display:flex;gap:10px;justify-content:center;margin-top:10px;flex-wrap:wrap;">
+                    <input type="number" id="parent-math-input" class="parent-input" placeholder="Kết quả...">
+                    <button class="parent-unlock-btn" onclick="TreasureZone.verifyParentGate()">Mở Khóa Tiếp Tục</button>
+                </div>
+                <div id="parent-gate-msg" style="color:#ef4444;font-size:14px;margin-top:8px;font-weight:700;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS HỆ THỐNG -->
+    <script src="js/sound.js"></script>
+    <script src="js/images_data.js"></script>
+    <script src="js/images_zone.js"></script>
+    <script src="js/visual_zone.js"></script>
+    <script src="js/letters_zone.js"></script>
+    <script src="js/numbers_zone.js"></script>
+    <script src="js/treasure_zone.js"></script>
+    <script src="js/stories_data.js"></script>
+    <script src="js/stories_zone.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

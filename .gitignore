@@ -1,0 +1,15 @@
+# OS & Editor files
+.DS_Store
+Thumbs.db
+*.tmp
+*.log
+.env
+.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Scratch and test files
+scratch/
+test_*.html
