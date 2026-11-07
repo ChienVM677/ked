@@ -23,6 +23,17 @@
             </div>
         </div>
 
+        
+        <!-- HỒ SƠ BÉ ĐANG HỌC (CHẠM ĐỂ ĐỔI BÉ HOẶC XEM BÁO CÁO) -->
+        <button class="active-profile-pill" id="btn-active-profile" onclick="App.showProfileGate()" title="Chạm để đổi bé hoặc xem báo cáo học tập">
+            <span id="top-avatar" class="topbar-avatar">🐻</span>
+            <div class="top-name-col">
+                <span id="top-name" class="topbar-name">Bé Bo</span>
+                <span id="top-level" class="topbar-level">Lớp Mầm (3T)</span>
+            </div>
+            <span class="top-switch-badge">Đổi ▾</span>
+        </button>
+
         <!-- BỘ CHỌN CẤP ĐỘ PHÁT TRIỂN CỦA BÉ -->
         <div class="level-selector-row" title="Chọn cấp độ phát triển phù hợp với lứa tuổi của bé">
             <button class="level-pill-btn active" data-level="1" onclick="App.setLevel(1)">🌱 Bé Mầm (3T)</button>
@@ -52,6 +63,8 @@
             </div>
 
             <!-- Nút Bật/Tắt âm thanh & Toàn màn hình -->
+            <!-- Nút chuyển đổi giao diện Điện Thoại / Máy Tính -->
+            <button class="ctrl-btn view-toggle-btn" id="btn-view-toggle" onclick="App.toggleDeviceMode()" title="Chuyển đổi giao diện Điện Thoại / Máy Tính">📱</button>
             <button class="ctrl-btn" id="btn-sound-toggle" title="Âm thanh: Đang Bật">🔊</button>
             <button class="ctrl-btn" id="btn-fullscreen" title="Toàn màn hình">⛶</button>
         </div>
@@ -434,6 +447,149 @@
                     <button class="parent-unlock-btn" onclick="TreasureZone.verifyParentGate()">Mở Khóa Tiếp Tục</button>
                 </div>
                 <div id="parent-gate-msg" style="color:#ef4444;font-size:14px;margin-top:8px;font-weight:700;"></div>
+            </div>
+        </div>
+    </div>
+
+    
+    <!-- THANH ĐIỀU HƯỚNG DƯỚI ĐÁY DÀNH CHO ĐIỆN THOẠI (BOTTOM NAV) -->
+    <nav class="ked-bottom-nav" id="ked-bottom-nav">
+        <button class="bnav-btn active" data-zone="images" onclick="App.openZone('images')">
+            <span class="bnav-icon">🎨</span>
+            <span class="bnav-label">Hình Ảnh</span>
+        </button>
+        <button class="bnav-btn" data-zone="visual" onclick="App.openZone('visual')">
+            <span class="bnav-icon">👁️</span>
+            <span class="bnav-label">Tư Duy</span>
+        </button>
+        <button class="bnav-btn" data-zone="letters" onclick="App.openZone('letters')">
+            <span class="bnav-icon">🔤</span>
+            <span class="bnav-label">Chữ Cái</span>
+        </button>
+        <button class="bnav-btn" data-zone="numbers" onclick="App.openZone('numbers')">
+            <span class="bnav-icon">🔢</span>
+            <span class="bnav-label">Con Số</span>
+        </button>
+        <button class="bnav-btn" data-zone="stories" onclick="App.openZone('stories')">
+            <span class="bnav-icon">📖</span>
+            <span class="bnav-label">Cổ Tích</span>
+        </button>
+        <button class="bnav-btn" data-zone="treasure" onclick="App.openZone('treasure')">
+            <span class="bnav-icon">🏴‍☠️</span>
+            <span class="bnav-label">Kho Báu</span>
+        </button>
+    </nav>
+
+    <!-- MODAL CỔNG HỒ SƠ BÉ & XÁC NHẬN TÀI KHOẢN (PROFILE GATE) -->
+    <div id="profile-gate-modal" class="profile-gate-overlay" style="display:none;">
+        <div class="profile-gate-card">
+            <div class="gate-header">
+                <div class="gate-mascot">🌟🎈</div>
+                <h2 class="gate-title">CHÀO MỪNG ĐẾN VỚI KED - BÉ VUI HỌC!</h2>
+                <p class="gate-subtitle">Hôm nay bé yêu nào sẽ học cùng cô? Chọn bé để bắt đầu nhé!</p>
+            </div>
+
+            <!-- DANH SÁCH HỒ SƠ CÁC BÉ -->
+            <div class="profiles-list-grid" id="profiles-list-container">
+                <!-- Sẽ render động các thẻ bé ở đây -->
+            </div>
+
+            <!-- FORM TẠO BÉ MỚI (MẶC ĐỊNH ẨN, BẤM NÚT SẼ MỞ RA) -->
+            <div id="new-profile-form" class="new-profile-form" style="display:none;">
+                <h3 class="form-title">✨ Thêm Bé Yêu Mới</h3>
+                <div class="form-group">
+                    <label class="form-label">Tên của bé:</label>
+                    <input type="text" id="input-new-child-name" class="kid-input" placeholder="Ví dụ: Bé Bo, Bé Bống, Bé Miu..." maxlength="20">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Độ tuổi của bé:</label>
+                    <div class="age-picker-row">
+                        <button type="button" class="age-pick-btn active" data-age="3" onclick="App.pickNewChildAge(3, this)">🌱 3 Tuổi (Lớp Mầm)</button>
+                        <button type="button" class="age-pick-btn" data-age="4" onclick="App.pickNewChildAge(4, this)">🌿 4 Tuổi (Lớp Chồi)</button>
+                        <button type="button" class="age-pick-btn" data-age="5" onclick="App.pickNewChildAge(5, this)">🌳 5 Tuổi (Lớp Lá)</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Chọn con vật bé yêu thích:</label>
+                    <div class="avatar-picker-row" id="avatar-picker-strip">
+                        <button type="button" class="avatar-pick-opt active" data-avatar="🐻" onclick="App.pickNewChildAvatar('🐻', this)">🐻</button>
+                        <button type="button" class="avatar-pick-opt" data-avatar="🐰" onclick="App.pickNewChildAvatar('🐰', this)">🐰</button>
+                        <button type="button" class="avatar-pick-opt" data-avatar="🐱" onclick="App.pickNewChildAvatar('🐱', this)">🐱</button>
+                        <button type="button" class="avatar-pick-opt" data-avatar="🐶" onclick="App.pickNewChildAvatar('🐶', this)">🐶</button>
+                        <button type="button" class="avatar-pick-opt" data-avatar="🦖" onclick="App.pickNewChildAvatar('🦖', this)">🦖</button>
+                        <button type="button" class="avatar-pick-opt" data-avatar="🦁" onclick="App.pickNewChildAvatar('🦁', this)">🦁</button>
+                        <button type="button" class="avatar-pick-opt" data-avatar="🐼" onclick="App.pickNewChildAvatar('🐼', this)">🐼</button>
+                        <button type="button" class="avatar-pick-opt" data-avatar="🦊" onclick="App.pickNewChildAvatar('🦊', this)">🦊</button>
+                    </div>
+                </div>
+                <div class="form-action-row">
+                    <button type="button" class="btn-cancel-create" onclick="App.hideNewProfileForm()">Quay lại</button>
+                    <button type="button" class="btn-confirm-create" onclick="App.confirmCreateProfile()">Tạo Hồ Sơ & Học Ngay 🎉</button>
+                </div>
+            </div>
+
+            <!-- HÀNG NÚT THAO TÁC CỔNG HỒ SƠ -->
+            <div class="gate-actions-row" id="gate-main-actions">
+                <button class="btn-gate-add" onclick="App.showNewProfileForm()">
+                    <span>➕</span> <span>Thêm Bé Mới</span>
+                </button>
+                <button class="btn-gate-parent" onclick="App.openParentDashboardGate()">
+                    <span>👨‍👩‍👧‍👦</span> <span>Báo Cáo Phụ Huynh 🔒</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL KHÓA PHỤ HUYNH (PARENT GATE CHALLENGE) -->
+    <div id="parent-challenge-modal" class="screentime-lock-overlay" style="display:none;">
+        <div class="lock-modal-card" style="max-width:440px;">
+            <div style="font-size:40px;margin-bottom:8px;">🔒👨‍👩‍👧‍👦</div>
+            <h3 style="font-size:20px;font-weight:900;color:#1e293b;">XÁC THỰC PHỤ HUYNH</h3>
+            <p style="font-size:14px;color:#64748b;margin:8px 0 16px;">Vui lòng trả lời câu hỏi bên dưới để vào trang quản trị:</p>
+            <div class="parent-gate-box" style="margin-top:0;">
+                <div class="parent-math-problem" id="parent-challenge-text">Ba cộng bốn bằng mấy?</div>
+                <div class="challenge-options-row" id="parent-challenge-options" style="display:flex;gap:10px;justify-content:center;margin-top:12px;">
+                    <!-- Options buttons -->
+                </div>
+                <div id="parent-challenge-error" style="color:#ef4444;font-size:13px;margin-top:8px;font-weight:700;display:none;">
+                    Chưa đúng rồi! Ba mẹ hãy chọn lại nhé.
+                </div>
+                <button class="home-nav-btn" style="margin-top:16px;background:#94a3b8;" onclick="App.closeParentChallenge()">Quay lại</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL BÁO CÁO HỌC TẬP PHỤ HUYNH & CÀI ĐẶT -->
+    <div id="parent-dashboard-modal" class="parent-dashboard-overlay" style="display:none;">
+        <div class="parent-dashboard-card">
+            <div class="parent-modal-header">
+                <div>
+                    <h2 class="parent-title">📊 BÁO CÁO HỌC TẬP CỦA BÉ</h2>
+                    <p class="parent-desc">Dành cho phụ huynh theo dõi tiến độ và thành tích học tập</p>
+                </div>
+                <button class="close-modal-btn" onclick="App.closeParentDashboard()">✕</button>
+            </div>
+
+            <!-- NỘI DUNG TỔNG KẾT THEO TỪNG BÉ -->
+            <div id="parent-reports-container" class="parent-reports-body">
+                <!-- Render động tiến độ của từng bé -->
+            </div>
+
+            <!-- CÀI ĐẶT BẢO VỆ MẮT BÉ -->
+            <div class="parent-settings-box">
+                <h4 style="font-size:16px;font-weight:800;color:#1e293b;margin-bottom:8px;">⏳ Cài đặt Bảo Vệ Mắt:</h4>
+                <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+                    <span style="font-size:14px;color:#475569;">Số câu hỏi mỗi lần chơi:</span>
+                    <button class="limit-opt-btn" onclick="App.setEyeLimit(50, this)">50 câu</button>
+                    <button class="limit-opt-btn" onclick="App.setEyeLimit(100, this)">100 câu</button>
+                    <button class="limit-opt-btn active" onclick="App.setEyeLimit(200, this)">200 câu (Chuẩn)</button>
+                </div>
+            </div>
+
+            <div class="parent-modal-footer">
+                <button class="btn-claim-reward" onclick="App.closeParentDashboard()" style="padding:10px 24px;">
+                    Đóng Báo Cáo
+                </button>
             </div>
         </div>
     </div>
