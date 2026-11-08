@@ -1,7 +1,7 @@
 /**
- * KED - Main Application Orchestrator v6.6
+ * KED - Main Application Orchestrator v6.7
  * Điều phối Hệ thống Giáo dục Sớm Đa Phân hệ & Quản lý Đa Hồ Sơ Người Chơi
- * Hỗ trợ 2 Chế Độ Giao Diện Độc Lập: MÁY TÍNH (Sidebar) & ĐIỆN THOẠI (Bottom Nav)
+ * Hỗ trợ 2 Giao Diện Chuyên Biệt: MÁY TÍNH (index.html) & ĐIỆN THOẠI (mobile.html)
  */
 
 const App = {
@@ -24,15 +24,19 @@ const App = {
         this.initProfiles();
 
         // 2. Khởi tạo SoundEngine
-        SoundEngine.init();
+        if (typeof SoundEngine !== 'undefined') {
+            SoundEngine.init();
+        }
 
         // 3. Lắng nghe các nút điều khiển trên Header
         const btnSound = document.getElementById('btn-sound-toggle');
         if (btnSound) {
             btnSound.addEventListener('click', () => {
-                const enabled = SoundEngine.toggleSound();
-                btnSound.textContent = enabled ? '🔊' : '🔇';
-                btnSound.title = enabled ? 'Âm thanh: Đang Bật' : 'Âm thanh: Đang Tắt';
+                if (typeof SoundEngine !== 'undefined') {
+                    const enabled = SoundEngine.toggleSound();
+                    btnSound.textContent = enabled ? '🔊' : '🔇';
+                    btnSound.title = enabled ? 'Âm thanh: Đang Bật' : 'Âm thanh: Đang Tắt';
+                }
             });
         }
 
@@ -47,15 +51,7 @@ const App = {
             });
         }
 
-        // 4. Khởi tạo trạng thái giao diện thiết bị (Desktop / Mobile)
-        const savedViewMode = localStorage.getItem('ked_force_mobile_view');
-        if (savedViewMode === 'true') {
-            document.body.classList.add('force-mobile-view');
-            const btnToggle = document.getElementById('btn-view-toggle');
-            if (btnToggle) btnToggle.textContent = '💻';
-        }
-
-        // 5. Mặc định mở ở Trang Chủ và kích hoạt Cổng Chọn Hồ Sơ Bé (Phương án A)
+        // 4. Mặc định mở ở Trang Chủ và hiển thị Cổng Chọn Hồ Sơ Bé
         this.openZone('home');
         this.showProfileGate();
     },
@@ -73,7 +69,7 @@ const App = {
             }
         }
 
-        // Nếu chưa có hồ sơ nào, khởi tạo 2 hồ sơ mặc định sinh động
+        // Nếu chưa có hồ sơ nào, khởi tạo 2 hồ sơ mẫu cho bé
         if (!this.profiles || this.profiles.length === 0) {
             this.profiles = [
                 {
@@ -132,7 +128,7 @@ const App = {
         this.updateLevelUI();
         this.updateStickersUI();
 
-        // Cập nhật Topbar Profile Chip
+        // Cập nhật Profile Pill trên Topbar
         const topAvatar = document.getElementById('top-avatar');
         if (topAvatar) topAvatar.textContent = p.avatar;
         const topName = document.getElementById('top-name');
@@ -145,9 +141,9 @@ const App = {
 
         localStorage.setItem('ked_active_profile_id_v3', p.id);
 
-        if (announce) {
+        if (announce && typeof SoundEngine !== 'undefined') {
             SoundEngine.playPop();
-            SoundEngine.speakFallback(`Chào mừng ${p.name} đến với KED! Bé học thật chăm ngoan nhé!`);
+            SoundEngine.speakFallback(`Chào mừng ${p.name} đến với KED! Cô chúc bé học thật vui nhé!`);
         }
     },
 
@@ -155,7 +151,7 @@ const App = {
     // CỔNG CHỌN HỒ SƠ BÉ (PROFILE GATE)
     // ========================================================
     showProfileGate() {
-        SoundEngine.playPop();
+        if (typeof SoundEngine !== 'undefined') SoundEngine.playPop();
         const modal = document.getElementById('profile-gate-modal');
         if (!modal) return;
 
@@ -179,13 +175,15 @@ const App = {
             return `
                 <div class="child-profile-card ${isActive ? 'active-profile' : ''}" onclick="App.selectProfile('${p.id}')">
                     <div class="profile-avatar-big">${p.avatar}</div>
-                    <div class="profile-name-big">${p.name}</div>
-                    <div class="profile-meta-row">
-                        <span class="profile-badge-age">${lvlName}</span>
-                        <span class="profile-badge-stars">⭐ ${p.stars || 0} Sao</span>
+                    <div class="profile-info-col" style="flex:1;">
+                        <div class="profile-name-big">${p.name}</div>
+                        <div class="profile-meta-row" style="display:flex;gap:6px;margin-top:4px;">
+                            <span class="profile-badge-age" style="background:#e0f2fe;color:#0369a1;padding:2px 8px;border-radius:8px;font-size:11px;font-weight:800;">${lvlName}</span>
+                            <span class="profile-badge-stars" style="background:#fef3c7;color:#b45309;padding:2px 8px;border-radius:8px;font-size:11px;font-weight:800;">⭐ ${p.stars || 0} Sao</span>
+                        </div>
                     </div>
                     <button class="btn-select-profile">
-                        ${isActive ? '👉 Đang Chọn Học' : 'Chọn Bé Học ➔'}
+                        ${isActive ? '👉 Đang Chọn' : 'Chọn Bé ➔'}
                     </button>
                 </div>
             `;
@@ -199,7 +197,7 @@ const App = {
     },
 
     showNewProfileForm() {
-        SoundEngine.playPop();
+        if (typeof SoundEngine !== 'undefined') SoundEngine.playPop();
         const form = document.getElementById('new-profile-form');
         const actions = document.getElementById('gate-main-actions');
         if (form) form.style.display = 'block';
@@ -220,7 +218,7 @@ const App = {
     },
 
     pickNewChildAge(age, btn) {
-        SoundEngine.playPop();
+        if (typeof SoundEngine !== 'undefined') SoundEngine.playPop();
         this.tempNewChildAge = age;
         const allBtns = document.querySelectorAll('.age-pick-btn');
         allBtns.forEach(b => b.classList.remove('active'));
@@ -228,7 +226,7 @@ const App = {
     },
 
     pickNewChildAvatar(avatar, btn) {
-        SoundEngine.playPop();
+        if (typeof SoundEngine !== 'undefined') SoundEngine.playPop();
         this.tempNewChildAvatar = avatar;
         const allAvatars = document.querySelectorAll('.avatar-pick-opt');
         allAvatars.forEach(b => b.classList.remove('active'));
@@ -263,7 +261,7 @@ const App = {
     // KHÓA PHỤ HUYNH & BÁO CÁO HỌC TẬP (PARENT DASHBOARD)
     // ========================================================
     openParentDashboardGate() {
-        SoundEngine.playPop();
+        if (typeof SoundEngine !== 'undefined') SoundEngine.playPop();
         this.hideProfileGate();
 
         // Tạo bài toán đố vui bằng chữ cho phụ huynh
@@ -283,13 +281,12 @@ const App = {
             const fake = Math.floor(Math.random() * 9) + 2;
             if (!options.includes(fake)) options.push(fake);
         }
-        // Trộn ngẫu nhiên
         options.sort(() => Math.random() - 0.5);
 
         const optsContainer = document.getElementById('parent-challenge-options');
         if (optsContainer) {
             optsContainer.innerHTML = options.map(ans => `
-                <button class="limit-opt-btn" style="padding:10px 18px;font-size:16px;font-weight:900;" onclick="App.verifyParentGate(${ans})">
+                <button class="m-subnav-btn" style="padding:10px 16px;font-size:16px;font-weight:900;" onclick="App.verifyParentGate(${ans})">
                     ${ans}
                 </button>
             `).join('');
@@ -310,12 +307,12 @@ const App = {
 
     verifyParentGate(selectedAns) {
         if (selectedAns === this.parentChallengeAnswer) {
-            SoundEngine.playTing();
+            if (typeof SoundEngine !== 'undefined') SoundEngine.playTing();
             const challengeModal = document.getElementById('parent-challenge-modal');
             if (challengeModal) challengeModal.style.display = 'none';
             this.openParentDashboard();
         } else {
-            SoundEngine.playSoftNotice();
+            if (typeof SoundEngine !== 'undefined') SoundEngine.playSoftNotice();
             const errEl = document.getElementById('parent-challenge-error');
             if (errEl) errEl.style.display = 'block';
         }
@@ -347,37 +344,37 @@ const App = {
             const stkCount = (p.stickers && p.stickers.length) || 0;
 
             return `
-                <div class="child-report-card">
-                    <div class="child-report-top">
+                <div class="child-report-card" style="background:#f8fafc;border:2px solid #e2e8f0;border-radius:16px;padding:14px;margin-bottom:12px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
                         <div style="display:flex;align-items:center;gap:10px;">
                             <span style="font-size:32px;">${p.avatar}</span>
                             <div>
-                                <h4 style="font-size:18px;font-weight:900;color:#1e293b;">
-                                    ${p.name} ${isCurrent ? '<span style="font-size:12px;background:#dcfce7;color:#166534;padding:2px 8px;border-radius:8px;">Đang học</span>' : ''}
+                                <h4 style="font-size:17px;font-weight:900;color:#1e293b;">
+                                    ${p.name} ${isCurrent ? '<span style="font-size:11px;background:#dcfce7;color:#166534;padding:2px 6px;border-radius:6px;">Đang học</span>' : ''}
                                 </h4>
                                 <div style="font-size:12px;color:#64748b;font-weight:700;">${lvlName}</div>
                             </div>
                         </div>
                         <div>
                             ${this.profiles.length > 1 ? `
-                                <button onclick="App.deleteProfile('${p.id}')" style="background:#fee2e2;color:#b91c1c;border:none;padding:6px 10px;border-radius:10px;font-size:12px;font-weight:800;cursor:pointer;">
-                                    Xóa Hồ Sơ
+                                <button onclick="App.deleteProfile('${p.id}')" style="background:#fee2e2;color:#b91c1c;border:none;padding:6px 10px;border-radius:8px;font-size:11px;font-weight:800;cursor:pointer;">
+                                    Xóa Bé
                                 </button>
                             ` : ''}
                         </div>
                     </div>
-                    <div class="child-report-stats">
-                        <div class="report-stat-box">
-                            <div class="stat-box-val">${qCount}</div>
-                            <div class="stat-box-lbl">Câu Đã Chơi</div>
+                    <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:8px;text-align:center;">
+                        <div style="background:#ffffff;border-radius:10px;padding:8px;box-shadow:0 1px 4px rgba(0,0,0,0.04);">
+                            <div style="font-size:18px;font-weight:900;color:#0284c7;">${qCount}</div>
+                            <div style="font-size:11px;font-weight:800;color:#64748b;">Câu Đã Học</div>
                         </div>
-                        <div class="report-stat-box">
-                            <div class="stat-box-val">⭐ ${stars}</div>
-                            <div class="stat-box-lbl">Sao Đã Đạt</div>
+                        <div style="background:#ffffff;border-radius:10px;padding:8px;box-shadow:0 1px 4px rgba(0,0,0,0.04);">
+                            <div style="font-size:18px;font-weight:900;color:#f59e0b;">⭐ ${stars}</div>
+                            <div style="font-size:11px;font-weight:800;color:#64748b;">Sao Đã Đạt</div>
                         </div>
-                        <div class="report-stat-box">
-                            <div class="stat-box-val">🎁 ${stkCount}</div>
-                            <div class="stat-box-lbl">Sticker Mở Khóa</div>
+                        <div style="background:#ffffff;border-radius:10px;padding:8px;box-shadow:0 1px 4px rgba(0,0,0,0.04);">
+                            <div style="font-size:18px;font-weight:900;color:#10b981;">🎁 ${stkCount}</div>
+                            <div style="font-size:11px;font-weight:800;color:#64748b;">Sticker Mở</div>
                         </div>
                     </div>
                 </div>
@@ -398,7 +395,7 @@ const App = {
     },
 
     setEyeLimit(limit, btn) {
-        SoundEngine.playPop();
+        if (typeof SoundEngine !== 'undefined') SoundEngine.playPop();
         this.sessionLimit = limit;
         const allBtns = document.querySelectorAll('.limit-opt-btn');
         allBtns.forEach(b => b.classList.remove('active'));
@@ -407,13 +404,13 @@ const App = {
     },
 
     // ========================================================
-    // ĐIỀU HƯỚNG PHÂN HỆ & CHUYỂN ĐỔI THIẾT BỊ
+    // ĐIỀU HƯỚNG PHÂN HỆ (OPEN ZONE)
     // ========================================================
     openZone(zoneName) {
         this.currentZone = zoneName;
-        SoundEngine.playPop();
+        if (typeof SoundEngine !== 'undefined') SoundEngine.playPop();
 
-        // Đồng bộ trạng thái active trên CẢ Sidebar (Desktop) VÀ Bottom Nav (Mobile)
+        // Đồng bộ trạng thái active trên Sidebar máy tính
         const sidebarBtns = document.querySelectorAll('.sidebar-nav-btn');
         sidebarBtns.forEach(btn => {
             if (btn.getAttribute('data-zone') === zoneName) {
@@ -423,7 +420,8 @@ const App = {
             }
         });
 
-        const bnavBtns = document.querySelectorAll('.bnav-btn');
+        // Đồng bộ trạng thái active trên Bottom Nav di động (.m-nav-btn & .bnav-btn)
+        const bnavBtns = document.querySelectorAll('.m-nav-btn, .bnav-btn');
         bnavBtns.forEach(btn => {
             if (btn.getAttribute('data-zone') === zoneName) {
                 btn.classList.add('active');
@@ -442,7 +440,7 @@ const App = {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Hiện / ẩn nút "Về trang chủ"
+        // Hiện / ẩn nút "Về trang chủ" trên máy tính nếu có
         const btnHome = document.getElementById('btn-home-nav');
         if (btnHome) {
             btnHome.style.display = zoneName === 'home' ? 'none' : 'inline-flex';
@@ -462,23 +460,12 @@ const App = {
         } else if (zoneName === 'treasure') {
             if (typeof TreasureZone !== 'undefined') TreasureZone.init();
         } else if (zoneName === 'home') {
-            SoundEngine.playVoice('prompt_welcome');
-        }
-    },
-
-    toggleDeviceMode() {
-        SoundEngine.playPop();
-        const isForce = document.body.classList.toggle('force-mobile-view');
-        localStorage.setItem('ked_force_mobile_view', isForce ? 'true' : 'false');
-        const btn = document.getElementById('btn-view-toggle');
-        if (btn) {
-            btn.textContent = isForce ? '💻' : '📱';
-            btn.title = isForce ? 'Chuyển về giao diện Máy Tính' : 'Chuyển sang giao diện Điện Thoại';
+            if (typeof SoundEngine !== 'undefined') SoundEngine.playVoice('prompt_welcome');
         }
     },
 
     setLevel(level) {
-        SoundEngine.playPop();
+        if (typeof SoundEngine !== 'undefined') SoundEngine.playPop();
         this.currentLevel = level;
         const p = this.getActiveProfile();
         if (p) {
@@ -490,13 +477,15 @@ const App = {
         let levelName = "Bé Mầm (3 Tuổi)";
         if (level === 2) levelName = "Bé Chồi (4 Tuổi)";
         if (level === 3) levelName = "Bé Lá (5 Tuổi)";
-        SoundEngine.speakFallback(`Đã chuyển sang cấp độ: ${levelName}`);
+        if (typeof SoundEngine !== 'undefined') {
+            SoundEngine.speakFallback(`Đã chuyển sang cấp độ: ${levelName}`);
+        }
     },
 
     updateLevelUI() {
-        const pills = document.querySelectorAll('.level-pill-btn');
+        const pills = document.querySelectorAll('.level-pill-btn, .age-pick-btn');
         pills.forEach(p => {
-            const lvl = parseInt(p.getAttribute('data-level'), 10);
+            const lvl = parseInt(p.getAttribute('data-level') || p.getAttribute('data-age'), 10);
             if (lvl === this.currentLevel) {
                 p.classList.add('active');
             } else {
@@ -515,7 +504,7 @@ const App = {
         this.updateStarUI();
 
         // Hiệu ứng ngôi sao nảy rung rinh
-        const badge = document.querySelector('.star-badge');
+        const badge = document.querySelector('.star-badge, .mobile-star-chip');
         if (badge) {
             badge.classList.add('star-bump');
             setTimeout(() => badge.classList.remove('star-bump'), 600);
@@ -524,13 +513,9 @@ const App = {
 
     updateStarUI() {
         const starEl = document.getElementById('star-count');
-        if (starEl) {
-            starEl.textContent = this.stars;
-        }
+        if (starEl) starEl.textContent = this.stars;
         const valStars = document.getElementById('val-stars');
-        if (valStars) {
-            valStars.textContent = this.stars;
-        }
+        if (valStars) valStars.textContent = this.stars;
     },
 
     updateStickersUI() {
