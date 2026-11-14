@@ -18,6 +18,10 @@ Tài liệu định nghĩa các khái niệm, quy ước nghiệp vụ sư phạ
 | **Đảo Kho Báu đa cấp độ** | Advanced Treasure Island | Hệ thống thử thách lên cấp độ tích hợp câu đố phủ định ("KHÔNG PHẢI"), so sánh tương đối, và suy luận nhân quả. |
 | **Vùng an toàn nhận thức** | Cognitive Comfort Zone | Màn hình tập trung vào 1 nhiệm vụ duy nhất, không quảng cáo, nút bấm tối thiểu 75-80px để chạm chính xác, hình là chính - chữ là phụ. |
 | **Củng cố tích cực** | Positive Reinforcement | Khi trẻ đúng: Pháo hoa, vỗ tay, sao vàng kèm giọng khen ngợi ấm áp. Khi chưa đúng: Âm thanh nhẹ nhàng, không báo lỗi đỏ làm trẻ sợ. |
+| **Chế độ Đọc Truyện Cho Bé** | Story Reading Mode | Chế độ tranh truyện tập trung nghe kể và ngắm tranh, câu văn ngắn gọn, chữ to rõ, không bị xao nhãng bởi câu đố bài tập. |
+| **Tương Tác & Thu Hoạch Kiến Thức** | Story Interactive & Harvest Mode | Chế độ sa bàn hành động và bộ câu hỏi tình huống thực tế đời sống rút ra từ câu chuyện. |
+| **Bộ Chọn Truyện Thu Gọn 1 Chạm** | Popover Story Picker | Nút chọn truyện nhỏ gọn trên thanh subnav, mở modal bảng chọn truyện to bản trực quan rồi tự đóng. |
+| **Huy Hiệu Bài Học Cuộc Sống** | Life-Skill Badges | Huy hiệu ghi nhận kỹ năng sống thu hoạch được sau mỗi câu chuyện (Đi mưa an toàn, Kiên trì cố gắng, Đoàn kết giúp đỡ). |
 
 ---
 

@@ -1,8 +1,8 @@
 {
   "code": "KED",
   "name": "KED - Bé Vui Học & Giáo Dục Sớm",
-  "version": "7.0.0",
-  "status": "🟢 Chuẩn Hóa Kiến Trúc Zero-Scroll Viewport Paradigm (1 Màn Hình Không Cuộn, Popover Thu Gọn Danh Mục & Lật Trang Paged Carousel)",
+  "version": "7.1.0",
+  "status": "🟢 Tách Độc Lập 2 Phần Vườn Cổ Tích: (1) Đọc Truyện Trực Quan & (2) Tương Tác Hành Động + Thu Hoạch Kiến Thức Đời Sống",
   "progress": 100,
   "updated_at": "2026-11-14",
   "target_audience": "Trẻ mầm non 3 - 5 tuổi (Phương pháp giáo dục tương tác đa giác quan không cuộn trang)",
@@ -14,21 +14,16 @@
   "mobile_url": "https://chienvm677.github.io/ked/mobile.html",
   "github_repo": "https://github.com/ChienVM677/ked",
   "features": [
-    "TRIỂN KHAI CHUẨN GIÁO DỤC MẦM NON ZERO-SCROLL VIEWPORT PARADIGM (100dvh FIXED VIEWPORT):",
-    "  • Khóa cứng toàn bộ khung nhìn 100dvh/100% không gian hiển thị, loại bỏ hoàn toàn thanh cuộn dọc (Zero vertical scroll) trên cả 2 phiên bản Máy tính và Điện thoại.",
-    "  • Trẻ em 3-5 tuổi không biết cử chỉ cuộn trang, dễ bấm nhầm và vỡ mạch tập trung; giải pháp 1 màn hình giúp bé tương tác tự nhiên 100% bằng chạm chọn.",
-    "BỘ CHỌN DANH MỤC THU GỌN DẠNG POPOVER / MODAL 1 CHẠM:",
-    "  • Vương quốc Hình ảnh: Gom 18 icon chủ đề chiếm diện tích thành 1 nút Popover [ 🚗 Phương tiện ▾ ] mở bảng chọn 1 chạm rồi tự đóng, nhường 100% sân khấu cho thẻ học.",
-    "  • Vương quốc Chữ cái: Gom 12 nguyên âm và 11 phụ âm ghép thành các nút Popover [ 🔤 Nguyên Âm: A ▾ ] và [ 🧩 Phụ Âm: CH ▾ ].",
-    "  • Con số & Toán học: Thu gọn 11 số (0-10) và 5 chặng (1-100) thành Popover [ 🔢 Số 1 ▾ ] và [ 💯 Dải: 1-20 ▾ ].",
-    "CƠ CHẾ PHÂN TRANG LẬT SÁCH TRANH (PAGED CAROUSEL) VỚI NÚT LẬT TO BẢN:",
-    "  • Thư viện 356 thẻ tranh: Hiển thị 4 thẻ cực đại (2x2) trên điện thoại và 6 thẻ (3x2) trên máy tính kèm nút ◀ Trang Trước / Trang Sau ▶.",
-    "  • Toa tàu 29 Chữ cái: 6 chữ cái cực đại (3x2) trên mỗi toa tàu kèm thanh lật trang mượt mà.",
-    "  • Bảng 100 số: Chia thành 5 chặng 20 số (1-20, 21-40, ...) với lưới 4x5 số to rõ vừa khít màn hình.",
-    "  • Luyện 5 dấu thanh: Ma trận trực quan 6 thẻ chữ (Thanh ngang, Sắc, Huyền, Hỏi, Ngã, Nặng) vừa khít màn hình.",
-    "KIỂM THỬ TỰ ĐỘNG BẰNG HEADLESS BROWSER (CDP AUTOMATION):",
-    "  • Đã kiểm thử đo đạc scrollHeight <= clientHeight trên 4 độ phân giải: Mobile 390x844 (iOS), Mobile 360x780 (Android), Desktop 1366x768 và Full HD 1920x1080.",
-    "  • Kết quả đạt 100% PASS cho toàn bộ 6 phân hệ (Hình ảnh, Chữ cái, Con số, Tư duy thị giác, Cổ tích, Đảo kho báu)."
+    "TÁCH ĐỘC LẬP 2 PHẦN PHÂN HỆ VƯỜN CỔ TÍCH (STORIES ZONE):",
+    "  • Phần 1: Đọc Truyện Cho Bé (Picture Book Mode) - Tranh minh họa SVG lớn, câu văn súc tích chữ to rõ, giọng đọc truyền cảm tiếng Việt, lật trang lật sách tranh mượt mà, điểm chạm hoạt họa sinh động.",
+    "  • Phần 2: Tương Tác Truyện & Thu Hoạch Kiến Thức (Interactive Quest & Life-Skill Harvest) - Kết hợp kép giữa Sa bàn hành động thực tế (Bé chạm mở ô che mưa, cổ vũ bạn Rùa chạy, nối vòng tay đoàn kết nhổ cải) và Bộ câu hỏi trắc nghiệm tình huống thực tế đời sống.",
+    "DANH MỤC LỰA CHỌN TRUYỆN POPOVER 1 CHẠM NGẮN GỌN SÚC TÍCH:",
+    "  • Nút Popover [ 🐰 Thỏ Con Đi Mưa ▾ ] mở bảng chọn 3 truyện kinh điển (Thỏ Con Đi Mưa, Rùa và Thỏ Chạy Thi, Nhổ Củ Cải Khổng Lồ) với icon to, thẻ phân loại, chạm 1 cái đổi truyện ngay và tự đóng modal.",
+    "BỘ CÂU HỎI THỰC TẾ & HUY HIỆU BÀI HỌC CUỘC SỐNG:",
+    "  • Rút ra các bài học thực tế đời thường cho bé: kỹ năng tự chuẩn bị và trú mưa an toàn khi có sấm chớp, đức tính kiên trì không chủ quan bỏ cuộc, tinh thần đoàn kết giúp đỡ nhau khi gặp việc khó.",
+    "  • Vinh danh trao Huy hiệu Kỹ Năng Sống (Ô Che Mưa An Toàn ☂️, Kiên Trì Cố Gắng 🐢, Đoàn Kết Giúp Đỡ 🤝) và thưởng +3 sao vàng tích lũy.",
+    "CHUẨN KIẾN TRÚC ZERO-SCROLL TOÀN DIỆN TRÊN MÁY TÍNH VÀ ĐIỆN THOẠI:",
+    "  • Đã kiểm thử tự động bằng Edge Headless CDP: scrollHeight <= clientHeight (0% thanh cuộn dọc) trên cả 2 giao diện mobile.html và index.html."
   ],
   "author": "Antigravity AI Pair Programming System"
 }

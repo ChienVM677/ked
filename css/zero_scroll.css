@@ -622,7 +622,7 @@ body {
 }
 
 /* KHÓA CỨNG TOÀN DIỆN CHO MÀN CHƠI KHÔNG CUỘN */
-#game-content, #images-content, #letters-content, #numbers-content, #visual-content, #treasure-content {
+#game-content, #images-content, #letters-content, #numbers-content, #visual-content, #treasure-content, #stories-content {
     flex: 1 1 auto !important;
     min-height: 0 !important;
     height: 100% !important;
@@ -630,6 +630,145 @@ body {
     flex-direction: column !important;
     overflow: hidden !important;
 }
+
+/* ========================================================
+   VƯỜN CỔ TÍCH ZERO-SCROLL (ĐỌC TRUYỆN & TƯƠNG TÁC THU HOẠCH)
+   ======================================================== */
+
+.story-stage-viewport {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    overflow: hidden !important;
+}
+
+.story-svg-container {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    border-radius: 20px !important;
+    border: 3px solid #e2e8f0 !important;
+    overflow: hidden !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05) !important;
+    position: relative !important;
+}
+
+.story-svg-container svg {
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    display: block !important;
+}
+
+.story-narrative-bar {
+    flex: 0 0 auto !important;
+    background: #ffffff !important;
+    border: 2px solid #bae6fd !important;
+    border-radius: 16px !important;
+    padding: 6px 12px !important;
+    margin: 4px 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 10px !important;
+    box-shadow: 0 2px 8px rgba(2, 132, 199, 0.08) !important;
+}
+
+.story-text-line {
+    font-size: clamp(13px, 2.4vh, 16px) !important;
+    font-weight: 900 !important;
+    color: #0f172a !important;
+    line-height: 1.25 !important;
+    flex: 1 !important;
+}
+
+.story-interactive-card {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    overflow: hidden !important;
+    background: #ffffff !important;
+    border: 3px solid #e0e7ff !important;
+    border-radius: 22px !important;
+    padding: 10px !important;
+}
+
+.story-action-stage {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    border-radius: 18px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+    overflow: hidden !important;
+    border: 2px dashed #818cf8 !important;
+    background: linear-gradient(135deg, #f8fafc, #eff6ff) !important;
+    padding: 8px !important;
+}
+
+.story-quiz-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    margin: 6px 0 !important;
+    width: 100% !important;
+    max-width: 480px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+.story-quiz-btn {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    background: #ffffff !important;
+    border: 3px solid #e2e8f0 !important;
+    border-radius: 18px !important;
+    padding: 10px 14px !important;
+    cursor: pointer !important;
+    font-family: var(--font-kids) !important;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04) !important;
+    transition: transform 0.15s ease, border-color 0.2s !important;
+    text-align: left !important;
+}
+
+.story-quiz-btn:active {
+    transform: scale(0.97) !important;
+    border-color: #38bdf8 !important;
+}
+
+.story-quiz-btn.correct-choice {
+    background: #ecfdf5 !important;
+    border-color: #10b981 !important;
+    box-shadow: 0 0 16px rgba(16, 185, 129, 0.4) !important;
+}
+
+.story-quiz-btn.wrong-choice {
+    background: #fef2f2 !important;
+    border-color: #ef4444 !important;
+}
+
+.harvest-badge-box {
+    text-align: center !important;
+    padding: 14px !important;
+    background: linear-gradient(135deg, #fef3c7, #fef9c3) !important;
+    border: 3px solid #f59e0b !important;
+    border-radius: 24px !important;
+    margin: auto !important;
+    max-width: 420px !important;
+    box-shadow: 0 8px 24px rgba(245, 158, 11, 0.25) !important;
+}
+
 
 /* ========================================================
    DESKTOP APP LAYOUT LOCKDOWN (ZERO-SCROLL)

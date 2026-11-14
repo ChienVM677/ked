@@ -150,54 +150,15 @@
         </section>
 
         <!-- ==============================================
-             PHÂN HỆ 5: VƯỜN CỔ TÍCH & TRUYỆN TRANH TƯƠNG TÁC
+             PHÂN HỆ 5: VƯỜN CỔ TÍCH (1. ĐỌC TRUYỆN • 2. TƯƠNG TÁC THU HOẠCH)
              ============================================== -->
         <section id="view-stories" class="zone-view">
             <div class="zone-header">
                 <h2 class="zone-title">📖 Vườn Cổ Tích</h2>
-                <span class="zone-badge">Truyện Tranh Tương Tác Đa Giác Quan</span>
+                <span class="zone-badge">1. Đọc Truyện • 2. Tương Tác Thu Hoạch</span>
             </div>
-
-            <div class="mobile-stories-wrap">
-                <!-- Dải chọn câu chuyện vuốt ngang -->
-                <div class="mobile-story-selector" id="stories-list-strip">
-                    <!-- Render động các thẻ truyện -->
-                </div>
-
-                <!-- Khung Tranh Minh Họa SVG Đa Giác Quan -->
-                <div class="story-stage-container" id="story-stage-box">
-                    <div style="font-size:14px;font-weight:900;color:#0369a1;margin-bottom:6px;text-align:center;" id="story-active-title">
-                        Thỏ Con Đi Dạo Trời Mưa (Trang 1/3)
-                    </div>
-                    
-                    <div class="story-canvas-box" id="story-canvas-box">
-                        <!-- SVG minh họa sẽ render ở đây -->
-                    </div>
-
-                    <div class="story-sentence-text" id="story-sentence-text">
-                        Đang tải câu chuyện...
-                    </div>
-
-                    <div class="story-touch-hint" id="story-touch-hint">
-                        💡 Bé chạm vào các hình trong tranh để nghe âm thanh nhé!
-                    </div>
-
-                    <!-- Mini-Quest Tương Tác Cuối Trang -->
-                    <div id="story-quest-container">
-                        <!-- Render động câu hỏi mini-quest -->
-                    </div>
-
-                    <!-- Thanh Điều Khiển Lật Trang Cực To -->
-                    <div class="story-nav-bar">
-                        <button class="story-page-btn btn-prev" id="btn-story-prev" onclick="StoriesZone.prevPage()">
-                            ◀ Trang Trước
-                        </button>
-                        <button class="story-page-btn btn-next" id="btn-story-next" onclick="StoriesZone.nextPage()">
-                            Trang Tiếp ➔
-                        </button>
-                    </div>
-                </div>
-            </div>
+            <div class="sub-nav-bar" id="stories-subnav"></div>
+            <div id="stories-content"></div>
         </section>
 
         <!-- ==============================================

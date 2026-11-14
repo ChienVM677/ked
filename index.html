@@ -255,53 +255,16 @@
             </section>
 
             <!-- ==========================================
-                 5. PHÂN HỆ 4: VƯỜN CỔ TÍCH & TRUYỆN KỂ TƯƠNG TÁC
+                 5. PHÂN HỆ 4: VƯỜN CỔ TÍCH (1. ĐỌC TRUYỆN • 2. TƯƠNG TÁC THU HOẠCH)
                  ========================================== -->
             <section class="zone-view" id="view-stories">
                 <div class="zone-header-card">
                     <div class="zone-title-group">
-                        <h1 id="story-active-title">📖 Vườn Cổ Tích & Truyện Kể Tương Tác</h1>
+                        <h1>📖 Vườn Cổ Tích & Tương Tác Thu Hoạch</h1>
                     </div>
+                    <div class="subnav-pills-row" id="stories-subnav"></div>
                 </div>
-
-                <div class="stories-container">
-                    <!-- THANH CHỌN TRUYỆN -->
-                    <div class="stories-list-strip" id="stories-list-strip">
-                        <!-- Nạp động qua StoriesZone -->
-                    </div>
-
-                    <!-- KHUNG TRANH MINH HỌA LỚN CÓ ĐIỂM CHẠM -->
-                    <div class="story-canvas-box" id="story-canvas-box">
-                        <!-- Nạp SVG minh họa của trang truyện -->
-                    </div>
-
-                    <!-- VĂN BẢN TRUYỆN & GỢI Ý CHẠM -->
-                    <div class="story-narrative-bar">
-                        <div class="story-sentence-text" id="story-sentence-text">
-                            Đang tải câu chuyện cho bé yêu...
-                        </div>
-                        <button class="voice-btn" onclick="StoriesZone.speakCurrentPage()" title="Bé bấm để nghe cô đọc lại câu này nhé!">
-                            🔊 Nghe lại
-                        </button>
-                    </div>
-
-                    <div class="story-touch-hint" id="story-touch-hint">
-                        💡 Bé hãy chạm vào các hình trong tranh để nghe âm thanh nhé!
-                    </div>
-
-                    <!-- KHU VỰC CÂU HỎI MINI-QUEST LỒNG TRONG TRUYỆN -->
-                    <div id="story-quest-container" style="display:none;"></div>
-
-                    <!-- NÚT ĐIỀU HƯỚNG LẬT TRANG -->
-                    <div class="story-nav-controls">
-                        <button class="story-nav-btn" id="btn-story-prev" onclick="StoriesZone.prevPage()">
-                            <span>⬅ Trang Trước</span>
-                        </button>
-                        <button class="story-nav-btn" id="btn-story-next" onclick="StoriesZone.nextPage()">
-                            <span>Trang Tiếp ➔</span>
-                        </button>
-                    </div>
-                </div>
+                <div id="stories-content"></div>
             </section>
 
             <!-- ==========================================
