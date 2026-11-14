@@ -9,7 +9,14 @@
             var isMobile = (window.innerWidth <= 768) || /Android|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             var preferDesktop = sessionStorage.getItem('ked_view_mode') === 'desktop';
             if (isMobile && !preferDesktop) {
-                window.location.replace('mobile.html');
+                var loc = window.location;
+                var basePath = loc.pathname;
+                if (!basePath.endsWith('/') && !basePath.endsWith('.html')) {
+                    basePath += '/';
+                } else {
+                    basePath = basePath.substring(0, basePath.lastIndexOf('/') + 1);
+                }
+                window.location.replace(loc.origin + basePath + 'mobile.html' + loc.search + loc.hash);
             }
         })();
     </script>
@@ -129,7 +136,7 @@
             <section class="zone-view active-zone" id="view-home">
                 <div class="home-welcome-hero">
                     <span class="hero-mascot">🦁</span>
-                    <h1 class="hero-title">Chào Mừng Bé Yêu Đến Với Đại Bản Doanh KED!</h1>
+                    <h1 class="hero-title">Chào Mừng Bé Yêu Đến Với Chương Trình Bé Vui Học!</h1>
                     <p class="hero-subtitle">Bé hãy chọn một trong các vương quốc kỳ diệu bên dưới để bắt đầu cuộc phiêu lưu nhé!</p>
                     <div class="hero-voice-banner">
                         <button class="voice-btn" onclick="SoundEngine.playVoice('prompt_welcome')">🔊 Nghe cô chào bé</button>

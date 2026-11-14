@@ -3401,3 +3401,414 @@ body {
     box-shadow: 0 6px 16px rgba(2, 132, 199, 0.45);
 }
 
+
+
+/* ========================================================
+   LETTERS ZONE v7.0: VOWEL TONES MATRIX & COMPOUND CONSONANTS
+   ======================================================== */
+.vowel-spotlight-banner {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: linear-gradient(135deg, #fef08a, #fed7aa);
+    border: 3px solid #f59e0b;
+    border-radius: 20px;
+    padding: 14px 20px;
+    margin: 14px 0 20px;
+    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.15);
+}
+
+.vowel-spotlight-char {
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    background: #ffffff;
+    border: 3px solid #f59e0b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    font-weight: 900;
+    color: #b45309;
+    flex-shrink: 0;
+}
+
+.vowel-spotlight-title {
+    font-size: 18px;
+    font-weight: 900;
+    color: #78350f;
+}
+
+.vowel-spotlight-subtitle {
+    font-size: 13px;
+    font-weight: 700;
+    color: #92400e;
+    margin-top: 2px;
+}
+
+/* Lưới 6 thẻ nguyên âm kết hợp dấu thanh */
+.vowel-tone-matrix-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
+    margin-top: 10px;
+}
+
+.vowel-tone-card {
+    background: #ffffff;
+    border: 3px solid #e2e8f0;
+    border-top-width: 8px;
+    border-radius: 20px;
+    padding: 14px 10px;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.vowel-tone-card:hover, .vowel-tone-card:active {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+}
+
+.tone-card-top {
+    margin-bottom: 2px;
+}
+
+.tone-badge {
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 9999px;
+    display: inline-block;
+}
+
+.tone-card-char-box {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    line-height: 1;
+}
+
+.tone-char-big {
+    font-size: 44px;
+    font-weight: 900;
+}
+
+.tone-char-small {
+    font-size: 24px;
+    font-weight: 800;
+    color: #64748b;
+}
+
+.tone-card-spell {
+    font-size: 13px;
+    font-weight: 800;
+    color: #475569;
+}
+
+.tone-card-vocab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 5px 10px;
+    width: 100%;
+}
+
+.vocab-icon {
+    font-size: 18px;
+}
+
+.vocab-text {
+    font-size: 13px;
+    font-weight: 800;
+    color: #1e293b;
+}
+
+/* 11 Phụ âm ghép */
+.compound-consonants-bar {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 6px 2px 12px;
+    scrollbar-width: none;
+}
+
+.compound-consonants-bar::-webkit-scrollbar {
+    display: none;
+}
+
+.compound-con-btn {
+    flex: 0 0 68px;
+    height: 68px;
+    border-radius: 18px;
+    border: 3px solid #cbd5e1;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+    transition: all 0.2s;
+    font-family: var(--font-kids);
+}
+
+.compound-con-btn.active {
+    transform: scale(1.08);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    background: #f0f9ff;
+    border-width: 4px;
+}
+
+.con-char {
+    font-size: 20px;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.con-icon {
+    font-size: 18px;
+    margin-top: 2px;
+}
+
+.compound-spotlight-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: #ffffff;
+    border: 3px solid #e2e8f0;
+    border-left-width: 8px;
+    border-radius: 20px;
+    padding: 16px 20px;
+    margin: 14px 0 16px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+}
+
+.spotlight-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 65px;
+}
+
+.spotlight-char {
+    font-size: 38px;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.spotlight-lower {
+    font-size: 18px;
+    font-weight: 800;
+    color: #64748b;
+}
+
+.spotlight-right {
+    flex: 1;
+}
+
+.spotlight-title {
+    font-size: 19px;
+    font-weight: 900;
+    color: #1e293b;
+}
+
+.spotlight-desc {
+    font-size: 13px;
+    font-weight: 700;
+    color: #64748b;
+    margin: 2px 0 8px;
+}
+
+.compound-pairs-intro {
+    font-size: 14px;
+    font-weight: 800;
+    color: #0369a1;
+    margin-bottom: 10px;
+}
+
+.compound-pairs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+}
+
+.compound-pair-card {
+    background: #ffffff;
+    border: 3px solid #e2e8f0;
+    border-radius: 18px;
+    padding: 12px 14px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.compound-pair-card:hover, .compound-pair-card:active {
+    transform: translateY(-3px) scale(1.02);
+    border-color: #38bdf8;
+    box-shadow: 0 8px 20px rgba(56, 189, 248, 0.25);
+}
+
+.pair-formula-badge {
+    align-self: flex-start;
+    background: #f1f5f9;
+    color: #475569;
+    font-size: 12px;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 8px;
+}
+
+.pair-main-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.pair-icon {
+    font-size: 34px;
+}
+
+.pair-word {
+    font-size: 20px;
+    font-weight: 900;
+    color: #1e293b;
+}
+
+.pair-meaning {
+    font-size: 13px;
+    font-weight: 700;
+    color: #64748b;
+}
+
+/* Phonics Cấp 4 */
+.spelling-level-selector {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.spelling-lvl-btn {
+    padding: 8px 14px;
+    border-radius: 9999px;
+    border: 2px solid #cbd5e1;
+    background: #ffffff;
+    font-size: 13px;
+    font-weight: 800;
+    font-family: var(--font-kids);
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.spelling-lvl-btn.active {
+    border-color: #f59e0b;
+    background: #f59e0b;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);
+}
+
+.spelling-card-stage {
+    border: 3px solid #e2e8f0;
+    border-radius: 24px;
+    padding: 20px 16px;
+    text-align: center;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+}
+
+.spelling-mascot-icon {
+    font-size: 54px;
+    display: inline-block;
+    animation: bounce 2s infinite;
+}
+
+.spelling-meaning-text {
+    font-size: 16px;
+    font-weight: 800;
+    color: #475569;
+    margin-top: 4px;
+}
+
+.spelling-formula-display {
+    font-size: 22px;
+    font-weight: 900;
+    color: #0284c7;
+    margin: 12px 0;
+}
+
+.spelling-slots-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 16px 0;
+}
+
+.spell-slot-box {
+    width: 58px;
+    height: 58px;
+    border: 3px dashed #cbd5e1;
+    border-radius: 16px;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    font-weight: 900;
+    color: #94a3b8;
+}
+
+.spell-slot-box.filled {
+    border-style: solid;
+    border-color: #0284c7;
+    background: #e0f2fe;
+    color: #0284c7;
+}
+
+.spelling-choices-row {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin: 16px 0;
+    flex-wrap: wrap;
+}
+
+.spell-choice-btn {
+    padding: 10px 20px;
+    border-radius: 16px;
+    border: 3px solid #38bdf8;
+    background: #ffffff;
+    font-size: 24px;
+    font-weight: 900;
+    font-family: var(--font-kids);
+    color: #0284c7;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.15);
+    transition: transform 0.15s;
+}
+
+.spell-choice-btn:active {
+    transform: scale(0.92);
+}
+
+.spelling-feedback-box {
+    padding: 10px 16px;
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 800;
+    margin: 10px auto;
+    max-width: 400px;
+}

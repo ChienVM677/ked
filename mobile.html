@@ -12,8 +12,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
-    <!-- CSS Stylesheets -->
+    <!-- CSS Stylesheets: style.css trước, mobile.css nạp sau để tối ưu kích thước màn hình nhỏ -->
     <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/mobile.css">
 </head>
 <body>
@@ -38,8 +39,8 @@
             </div>
             <!-- Bật tắt âm thanh -->
             <button class="mobile-ctrl-btn" id="btn-sound-toggle" title="Âm thanh: Đang Bật">🔊</button>
-            <!-- Nút chuyển sang bản Máy Tính -->
-            <button class="mobile-ctrl-btn" onclick="sessionStorage.setItem('ked_view_mode', 'desktop'); window.location.replace('index.html');" title="Chuyển sang giao diện Máy Tính">💻</button>
+            <!-- Nút chuyển sang bản Máy Tính (Dùng đường dẫn an toàn) -->
+            <button class="mobile-ctrl-btn" onclick="sessionStorage.setItem('ked_view_mode', 'desktop'); var loc = window.location; var dir = loc.pathname.substring(0, loc.pathname.lastIndexOf('/') + 1); window.location.replace(loc.origin + dir + 'index.html' + loc.search + loc.hash);" title="Chuyển sang giao diện Máy Tính">💻</button>
         </div>
     </header>
 
@@ -51,8 +52,13 @@
              ============================================== -->
         <section id="view-home" class="zone-view active-zone">
             <div class="mobile-hero-banner">
-                <div class="hero-greeting">Chào bé yêu đến với KED! 🌟</div>
+                <div class="hero-greeting">Chào bé yêu đến với chương trình Bé Vui Học! 🌟</div>
                 <div class="hero-subtitle">Bé hãy chọn một trò chơi thật vui bên dưới nhé!</div>
+                <div style="margin-top:10px;">
+                    <button class="voice-btn" onclick="SoundEngine.playVoice('prompt_welcome')" style="background:#ffffff; color:#b45309; border:2px solid #f59e0b; border-radius:9999px; padding:6px 16px; font-weight:800; font-size:13px; font-family:var(--font-kids); cursor:pointer;">
+                        🔊 Nghe cô chào bé
+                    </button>
+                </div>
             </div>
 
             <div class="mobile-hub-grid">
@@ -70,14 +76,14 @@
 
                 <div class="mobile-hub-card" onclick="App.openZone('letters')" style="border-color:#f43f5e; background:linear-gradient(180deg,#ffffff,#fff1f2);">
                     <div class="hub-card-icon">🔤</div>
-                    <div class="hub-card-title">Chữ Cái</div>
-                    <div class="hub-card-desc">Đánh vần & 5 Dấu</div>
+                    <div class="hub-card-title">Chữ Cái & Đánh Vần</div>
+                    <div class="hub-card-desc">29 Chữ • 5 Dấu • Phụ Âm</div>
                 </div>
 
                 <div class="mobile-hub-card" onclick="App.openZone('numbers')" style="border-color:#10b981; background:linear-gradient(180deg,#ffffff,#f0fdf4);">
                     <div class="hub-card-icon">🔢</div>
-                    <div class="hub-card-title">Con Số</div>
-                    <div class="hub-card-desc">Toán tư duy & Đếm</div>
+                    <div class="hub-card-title">Con Số & Toán Học</div>
+                    <div class="hub-card-desc">Đếm số & Bảng 100 số</div>
                 </div>
 
                 <div class="mobile-hub-card" onclick="App.openZone('stories')" style="border-color:#ec4899; background:linear-gradient(180deg,#ffffff,#fdf2f8);">
@@ -102,33 +108,8 @@
                 <h2 class="zone-title">🎨 Vương Quốc Hình Ảnh</h2>
                 <span class="zone-badge">18 Chủ Đề • 356 Thẻ Tranh SVG</span>
             </div>
-
-            <!-- Dải Subnav Chọn Chế Độ (Thư Viện vs Bé Tìm Hình) -->
-            <div class="mobile-subnav" id="images-subnav">
-                <!-- Sẽ do images_zone.js render hoặc kích hoạt -->
-            </div>
-
-            <!-- Thanh 18 Icon Chủ Đề Vuốt Ngang -->
-            <div class="mobile-topic-strip" id="images-categories-bar">
-                <!-- Sẽ do images_zone.js render 18 icon -->
-            </div>
-
-            <!-- VÙNG 1: THƯ VIỆN THẺ TRANH (LƯỚI 2 CỘT) -->
-            <div id="images-library-view">
-                <div class="mobile-images-grid" id="images-grid-container">
-                    <!-- Sẽ render động các thẻ tranh 2 cột -->
-                </div>
-            </div>
-
-            <!-- VÙNG 2: BÉ TÌM HÌNH -->
-            <div id="images-find-view" style="display:none;">
-                <div class="find-prompt-card">
-                    <div class="find-prompt-text" id="find-item-prompt">Bé hãy tìm hình theo lời cô đọc nhé!</div>
-                </div>
-                <div class="find-options-grid" id="find-item-options">
-                    <!-- Sẽ render động 4 hình ảnh đáp án -->
-                </div>
-            </div>
+            <div class="sub-nav-bar" id="images-subnav"></div>
+            <div id="images-content"></div>
         </section>
 
         <!-- ==============================================
@@ -139,17 +120,8 @@
                 <h2 class="zone-title">👁️ Tư Duy Thị Giác</h2>
                 <span class="zone-badge">Màu Sắc • Kích Thước • Môi Trường</span>
             </div>
-
-            <div class="mobile-sub-toolbar" id="visual-mode-bar">
-                <!-- Sub modes bar -->
-            </div>
-
-            <div id="visual-question-box" style="margin-top:10px;">
-                <!-- Nội dung câu hỏi so sánh / phân loại -->
-            </div>
-            <div id="visual-options-container" class="mobile-images-grid" style="margin-top:12px;">
-                <!-- Các đáp án lựa chọn -->
-            </div>
+            <div class="sub-nav-bar" id="visual-subnav"></div>
+            <div id="visual-content"></div>
         </section>
 
         <!-- ==============================================
@@ -158,16 +130,10 @@
         <section id="view-letters" class="zone-view">
             <div class="zone-header">
                 <h2 class="zone-title">🔤 Chữ Cái & Đánh Vần</h2>
-                <span class="zone-badge">Bảng Chữ Cái • 5 Dấu Thanh • Ghép Vần</span>
+                <span class="zone-badge">Bảng Chữ Cái • 5 Dấu Thanh • Phụ Âm Ghép</span>
             </div>
-
-            <div class="mobile-sub-toolbar" id="letters-mode-bar">
-                <!-- Sub modes bar -->
-            </div>
-
-            <div id="letters-content-box" style="margin-top:10px;">
-                <!-- Nội dung học chữ cái và đánh vần -->
-            </div>
+            <div class="sub-nav-bar" id="letters-subnav"></div>
+            <div id="letters-content"></div>
         </section>
 
         <!-- ==============================================
@@ -176,16 +142,10 @@
         <section id="view-numbers" class="zone-view">
             <div class="zone-header">
                 <h2 class="zone-title">🔢 Con Số & Toán Học</h2>
-                <span class="zone-badge">Đếm Số • So Sánh Lớn Bé • Phép Tính</span>
+                <span class="zone-badge">Đếm Số • Bảng 100 Số • Phép Tính</span>
             </div>
-
-            <div class="mobile-sub-toolbar" id="numbers-mode-bar">
-                <!-- Sub modes bar -->
-            </div>
-
-            <div id="numbers-content-box" style="margin-top:10px;">
-                <!-- Nội dung học đếm và toán tư duy -->
-            </div>
+            <div class="sub-nav-bar" id="numbers-subnav"></div>
+            <div id="numbers-content"></div>
         </section>
 
         <!-- ==============================================
@@ -248,13 +208,57 @@
                 <span class="zone-badge">Mở Rương Bí Mật & Thu Thập Sticker</span>
             </div>
 
-            <div style="text-align:center; padding: 20px 10px;" id="treasure-chest-box">
-                <div style="font-size:72px; margin-bottom:12px; animation: bounce 2s infinite;" id="chest-mascot">🎁</div>
-                <h3 style="font-size:18px;font-weight:900;color:#1e293b;">BÉ ĐÃ ĐẠT <span id="val-stars" style="color:#f59e0b;">0</span> SAO VÀNG!</h3>
-                <p style="font-size:13px;color:#64748b;margin:6px 0 16px;">Mỗi khi trả lời đúng các câu đố, bé sẽ nhận được chìa khóa mở rương kho báu!</p>
-                <button class="m-subnav-btn active" style="padding:12px 24px; font-size:15px;" onclick="TreasureZone.openStickerBook()">
-                    📖 Mở Sổ Dán Sticker Của Bé
-                </button>
+            <div class="treasure-view-container">
+                <!-- BẢN ĐỒ TIẾN TRÌNH LÊN CẤP ĐỘ -->
+                <div class="progression-map">
+                    <div class="island-steps">
+                        <div class="island-step-pill active" id="tg-pill-lvl-1">
+                            <span>🏝️</span> <span>Cấp 1</span>
+                        </div>
+                        <div class="island-step-pill" id="tg-pill-lvl-2">
+                            <span>🪸</span> <span>Cấp 2</span>
+                        </div>
+                        <div class="island-step-pill" id="tg-pill-lvl-3">
+                            <span>🏰</span> <span>Cấp 3</span>
+                        </div>
+                        <div class="island-step-pill" id="tg-pill-lvl-4">
+                            <span>👑</span> <span>Cấp 4</span>
+                        </div>
+                    </div>
+
+                    <div class="progress-track" title="Thanh tiến trình thu thập kho báu">
+                        <div class="progress-bar-fill" id="tg-progress-bar"></div>
+                    </div>
+
+                    <div style="font-size: 13px; font-weight: 900; color: #b45309; text-align:center; margin-top:6px;">
+                        Rương tiếp theo: <span id="tg-streak-counter">3</span> câu đúng
+                    </div>
+
+                    <div style="margin-top:8px; display:flex; justify-content:center; gap:8px;">
+                        <button class="kid-pill active" onclick="TreasureZone.openStickerBook()" style="padding:8px 16px; font-size:13px;">
+                            📖 Mở Sổ Dán Sticker (<span id="tg-sticker-count-badge">0</span>)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- KHU VỰC CÂU HỎI & CÁC LỰA CHỌN -->
+                <div class="treasure-arena-card">
+                    <div class="arena-question-box">
+                        <div class="question-text-giant" id="tg-question-text">
+                            Đang chuẩn bị câu đố kỳ diệu...
+                        </div>
+                        <button class="voice-btn-large" onclick="TreasureZone.playQuestionAudio()" style="margin-top:6px; font-size:13px; padding:6px 14px;">
+                            🔊 Nghe lại câu hỏi
+                        </button>
+                    </div>
+
+                    <!-- LƯỚI CÁC ĐÁP ÁN LỰA CHỌN -->
+                    <div class="choices-giant-grid" id="tg-choices-container">
+                        <!-- Sẽ render động các nút lựa chọn lớn -->
+                    </div>
+
+                    <div class="feedback-banner" id="tg-feedback-banner" style="display: none;"></div>
+                </div>
             </div>
         </section>
 
@@ -315,46 +319,44 @@
                     </div>
                 </div>
                 <div style="margin-bottom:12px;">
-                    <label style="font-size:12px;font-weight:800;color:#334155;display:block;margin-bottom:4px;">Chọn con vật bé thích:</label>
-                    <div class="avatar-picker-row" style="display:flex;gap:8px;overflow-x:auto;padding:4px 0;">
-                        <button type="button" class="avatar-pick-opt active" data-avatar="🐻" onclick="App.pickNewChildAvatar('🐻', this)">🐻</button>
-                        <button type="button" class="avatar-pick-opt" data-avatar="🐰" onclick="App.pickNewChildAvatar('🐰', this)">🐰</button>
-                        <button type="button" class="avatar-pick-opt" data-avatar="🐱" onclick="App.pickNewChildAvatar('🐱', this)">🐱</button>
-                        <button type="button" class="avatar-pick-opt" data-avatar="🐶" onclick="App.pickNewChildAvatar('🐶', this)">🐶</button>
-                        <button type="button" class="avatar-pick-opt" data-avatar="🦖" onclick="App.pickNewChildAvatar('🦖', this)">🦖</button>
-                        <button type="button" class="avatar-pick-opt" data-avatar="🦁" onclick="App.pickNewChildAvatar('🦁', this)">🦁</button>
-                        <button type="button" class="avatar-pick-opt" data-avatar="🐼" onclick="App.pickNewChildAvatar('🐼', this)">🐼</button>
-                        <button type="button" class="avatar-pick-opt" data-avatar="🦊" onclick="App.pickNewChildAvatar('🦊', this)">🦊</button>
+                    <label style="font-size:12px;font-weight:800;color:#334155;display:block;margin-bottom:4px;">Chọn biểu tượng:</label>
+                    <div style="display:flex;gap:8px;font-size:24px;">
+                        <span class="avatar-pick-opt active" onclick="App.pickNewChildAvatar('🐻', this)" style="cursor:pointer;">🐻</span>
+                        <span class="avatar-pick-opt" onclick="App.pickNewChildAvatar('🐰', this)" style="cursor:pointer;">🐰</span>
+                        <span class="avatar-pick-opt" onclick="App.pickNewChildAvatar('🦁', this)" style="cursor:pointer;">🦁</span>
+                        <span class="avatar-pick-opt" onclick="App.pickNewChildAvatar('🐼', this)" style="cursor:pointer;">🐼</span>
+                        <span class="avatar-pick-opt" onclick="App.pickNewChildAvatar('🐱', this)" style="cursor:pointer;">🐱</span>
                     </div>
                 </div>
                 <div style="display:flex;gap:8px;">
-                    <button type="button" class="btn-cancel-create" onclick="App.hideNewProfileForm()" style="flex:1;padding:10px;border-radius:12px;border:2px solid #cbd5e1;background:#fff;font-weight:800;">Quay lại</button>
-                    <button type="button" class="btn-confirm-create" onclick="App.confirmCreateProfile()" style="flex:2;padding:10px;border-radius:12px;border:none;background:#10b981;color:#fff;font-weight:900;">Tạo & Vào Học 🎉</button>
+                    <button type="button" class="m-subnav-btn active" style="flex:1;" onclick="App.confirmCreateProfile()">Tạo Hồ Sơ</button>
+                    <button type="button" class="m-subnav-btn" onclick="App.hideNewProfileForm()">Hủy</button>
                 </div>
             </div>
 
-            <div class="gate-actions-row" id="gate-main-actions" style="display:flex;gap:10px;margin-top:10px;">
-                <button class="m-subnav-btn active" style="flex:1;" onclick="App.showNewProfileForm()">
-                    ➕ Thêm Bé Mới
+            <!-- Nút chức năng chính của cổng hồ sơ -->
+            <div id="gate-main-actions" style="display:flex;gap:8px;margin-top:12px;">
+                <button class="m-subnav-btn" style="flex:1;" onclick="App.showNewProfileForm()">
+                    ➕ Thêm Bé
                 </button>
-                <button class="m-subnav-btn" style="flex:1;" onclick="App.openParentDashboardGate()">
-                    👨‍👩‍👧‍👦 Phụ Huynh 🔒
+                <button class="m-subnav-btn" style="flex:1;background:#f8fafc;" onclick="App.openParentDashboardGate()">
+                    🔒 Phụ Huynh
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- 5. MODAL KHÓA PHỤ HUYNH (PARENT GATE) -->
+    <!-- 5. MODAL THỬ THÁCH PHỤ HUYNH -->
     <div id="parent-challenge-modal" class="profile-gate-overlay" style="display:none;">
-        <div class="profile-gate-card" style="padding:20px 16px;">
-            <div style="font-size:36px;margin-bottom:6px;">🔒👨‍👩‍👧‍👦</div>
-            <h3 style="font-size:18px;font-weight:900;color:#1e293b;">XÁC THỰC PHỤ HUYNH</h3>
-            <p style="font-size:13px;color:#64748b;margin:6px 0 14px;">Ba mẹ trả lời câu hỏi để vào trang quản trị:</p>
-            <div id="parent-challenge-text" style="font-size:18px;font-weight:900;color:#0369a1;background:#e0f2fe;padding:12px;border-radius:14px;margin-bottom:12px;">
-                Ba cộng bốn bằng mấy?
+        <div class="profile-gate-card">
+            <div style="font-size:36px;margin-bottom:6px;">🔒</div>
+            <h3 style="font-size:18px;font-weight:900;color:#0369a1;margin-bottom:4px;">XÁC THỰC PHỤ HUYNH</h3>
+            <p style="font-size:13px;color:#64748b;margin-bottom:12px;">Ba mẹ vui lòng giải câu đố bên dưới để vào trang báo cáo:</p>
+            <div id="parent-challenge-text" style="font-size:19px;font-weight:900;color:#1e293b;background:#e0f2fe;padding:12px;border-radius:14px;margin-bottom:12px;">
+                Hai cộng ba bằng mấy?
             </div>
-            <div id="parent-challenge-options" style="display:flex;gap:8px;justify-content:center;margin-bottom:12px;">
-                <!-- Options buttons -->
+            <div id="parent-challenge-options" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;">
+                <!-- Sinh động 4 đáp án -->
             </div>
             <div id="parent-challenge-error" style="color:#ef4444;font-size:13px;font-weight:800;display:none;margin-bottom:10px;">
                 Chưa đúng rồi! Ba mẹ hãy chọn lại nhé.

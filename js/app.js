@@ -143,7 +143,7 @@ const App = {
 
         if (announce && typeof SoundEngine !== 'undefined') {
             SoundEngine.playPop();
-            SoundEngine.speakFallback(`Chào mừng ${p.name} đến với KED! Cô chúc bé học thật vui nhé!`);
+            SoundEngine.speakFallback(`Chào mừng bé ${p.name} đến với chương trình Bé Vui Học! Hôm nay chúng mình cùng học và chơi thật vui nhé!`);
         }
     },
 

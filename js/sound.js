@@ -139,10 +139,13 @@ const SoundEngine = {
      * giọng nam ngoại quốc (Microsoft David / Mark) đọc đánh vần sai bậy.
      */
     speakFallback(text, onEnd = null) {
-        if (!this.soundEnabled || !('speechSynthesis' in window)) {
+        if (!this.soundEnabled || !('speechSynthesis' in window) || !text) {
             if (onEnd) setTimeout(onEnd, 200);
             return;
         }
+
+        // Chuẩn hóa phát âm tiếng Việt: thay thế từ viết tắt tiếng Anh "KED" bằng "Bé Vui Học" tránh đọc sai chính tả
+        text = text.replace(/\bKED\b/gi, 'Bé Vui Học');
 
         let voices = window.speechSynthesis.getVoices();
         let viVoice = null;
