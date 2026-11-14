@@ -1,15 +1,19 @@
 /**
- * KED - Stories Zone Module v7.0
+ * KED - Stories Zone Module v7.2
  * Vườn Cổ Tích & Tương Tác Thu Hoạch Kiến Thức (Zero-Scroll Viewport Paradigm)
- * 2 Phân Hệ Độc Lập:
- *   - Phần 1: Đọc Truyện Cho Bé (Picture Book Mode - Tranh SVG lớn, giọng đọc truyền cảm, lật trang)
- *   - Phần 2: Tương Tác Truyện & Thu Hoạch Kiến Thức (Action Quest + Life-Skill Quizzes + Huy hiệu bài học)
+ * 2 Bậc Danh Mục Gộp 1 Dòng Duy Nhất (38px):
+ *   - Bậc 1: Chọn Truyện Popover 1 Chạm [ 🐰 Thỏ Con Đi Mưa ▾ ]
+ *   - Bậc 2: Phương Thức Segmented Toggle [ 📖 Đọc | 🎭 Tương Tác ]
+ * Cơ Chế Tiến Triển Liên Tục (Seamless Continuous Progression):
+ *   - Tự động đọc và tự động lật trang tiếp sau khi cô đọc xong 2s
+ *   - Trang cuối tự động chuyển tiếp liền mạch sang Tương Tác & Câu Hỏi Thực Tế
  */
 
 const StoriesZone = {
     currentStoryId: "rainy_day",
     currentMode: "read", // "read" | "interact"
     readPageIndex: 1,
+    autoAdvanceTimer: null,
 
     // Trạng thái Phần 2
     interactStep: "action", // "action" | "quiz" | "reward"
@@ -21,6 +25,7 @@ const StoriesZone = {
     },
 
     init() {
+        this.clearTimers();
         this.renderSubMenu();
         if (this.currentMode === "read") {
             this.renderReadMode();
@@ -29,31 +34,43 @@ const StoriesZone = {
         }
     },
 
+    clearTimers() {
+        if (this.autoAdvanceTimer) {
+            clearTimeout(this.autoAdvanceTimer);
+            this.autoAdvanceTimer = null;
+        }
+    },
+
+    /* ========================================================
+       2 BẬC DANH MỤC GỘP 1 DÒNG DUY NHẤT (SIÊU TINH GỌN 38px)
+       ======================================================== */
     renderSubMenu() {
         const subNav = document.getElementById('stories-subnav');
         if (!subNav) return;
         const curStory = STORIES_DATA.find(s => s.id === this.currentStoryId) || STORIES_DATA[0];
 
         subNav.innerHTML = `
-            <div class="zero-scroll-subbar">
-                <div class="mode-switch-group">
-                    <button class="kid-pill-compact ${this.currentMode === 'read' ? 'active' : ''}" onclick="StoriesZone.switchMode('read')">
-                        📖 1. Đọc Truyện
+            <div class="story-top-control-bar">
+                <!-- BẬC 1: Chọn Truyện Popover 1 Chạm -->
+                <button class="topic-picker-btn" onclick="StoriesZone.openStoryPickerModal()" title="Chạm để đổi câu chuyện khác">
+                    <span>${curStory.icon} <strong>${curStory.title}</strong></span> <span style="font-size:10px;">▾</span>
+                </button>
+
+                <!-- BẬC 2: Segmented Control [ 📖 Đọc | 🎭 Tương Tác ] -->
+                <div class="story-segmented-mode" title="Chọn phương thức: Đọc truyện tranh hoặc Tương tác">
+                    <button class="story-mode-toggle-btn ${this.currentMode === 'read' ? 'active' : ''}" onclick="StoriesZone.switchMode('read')">
+                        📖 Đọc
                     </button>
-                    <button class="kid-pill-compact ${this.currentMode === 'interact' ? 'active' : ''}" onclick="StoriesZone.switchMode('interact')">
-                        🎭 2. Tương Tác & Thu Hoạch
+                    <button class="story-mode-toggle-btn ${this.currentMode === 'interact' ? 'active' : ''}" onclick="StoriesZone.switchMode('interact')">
+                        🎭 Tương Tác
                     </button>
                 </div>
-
-                <!-- Nút Popover Chọn Truyện Ngắn Gọn 1 Chạm -->
-                <button class="topic-picker-btn" onclick="StoriesZone.openStoryPickerModal()">
-                    <span>${curStory.icon} <strong>${curStory.title}</strong></span> <span style="font-size:10px;">▾ Đổi Truyện</span>
-                </button>
             </div>
         `;
     },
 
     switchMode(mode) {
+        this.clearTimers();
         this.currentMode = mode;
         if (typeof SoundEngine !== 'undefined') SoundEngine.playPop();
         this.renderSubMenu();
@@ -69,6 +86,7 @@ const StoriesZone = {
     },
 
     openStoryPickerModal() {
+        this.clearTimers();
         if (typeof SoundEngine !== 'undefined') SoundEngine.playPop();
         let modal = document.getElementById('stories-picker-modal');
         if (!modal) {
@@ -111,6 +129,7 @@ const StoriesZone = {
     },
 
     selectStory(storyId) {
+        this.clearTimers();
         this.currentStoryId = storyId;
         this.readPageIndex = 1;
         this.interactStep = 'action';
@@ -129,9 +148,10 @@ const StoriesZone = {
     },
 
     /* ========================================================
-       PHẦN 1: ĐỌC TRUYỆN CHO BÉ (PICTURE BOOK MODE)
+       PHẦN 1: ĐỌC TRUYỆN CHO BÉ (TIẾN TRIỂN LIÊN TỤC TỪNG TRANG)
        ======================================================== */
     renderReadMode(container) {
+        this.clearTimers();
         if (!container) container = document.getElementById('stories-content');
         if (!container) return;
 
@@ -153,9 +173,14 @@ const StoriesZone = {
                     <div class="story-text-line" id="story-read-text">
                         ${page.text}
                     </div>
-                    <button class="kid-pill-compact" style="background:#0284c7; color:#fff; border-color:#0284c7; padding:4px 10px; flex-shrink:0;" onclick="StoriesZone.speakCurrentReadPage()">
-                        🔊 Nghe Cô Đọc
+                    <button class="kid-pill-compact" style="background:#0284c7; color:#fff; border-color:#0284c7; padding:4px 10px; flex-shrink:0;" onclick="StoriesZone.speakCurrentReadPage(true)">
+                        🔊 Nghe Lại
                     </button>
+                </div>
+
+                <!-- THANH CHỈ BÁO ĐẾM LÙI TỰ ĐỘNG LẬT TRANG -->
+                <div class="story-auto-advance-indicator" title="Tự động lật trang khi đọc xong">
+                    <div class="story-auto-advance-bar" id="story-advance-bar"></div>
                 </div>
 
                 <!-- DÒNG GỢI Ý CHẠM HOẠT HỌA -->
@@ -163,7 +188,7 @@ const StoriesZone = {
                     💡 ${page.touchHints || 'Bé chạm vào các hình trong tranh để nghe âm thanh nhé!'}
                 </div>
 
-                <!-- THANH LẬT TRANG DƯỚI ĐÁY -->
+                <!-- THANH LẬT TRANG DƯỚI ĐÁY (TIẾN TRIỂN THỦ CÔNG HOẶC TỰ ĐỘNG) -->
                 <div class="zero-scroll-pager">
                     <button class="pager-btn btn-prev" onclick="StoriesZone.prevReadPage()" ${this.readPageIndex <= 1 ? 'disabled' : ''}>
                         ◀ Trang Trước
@@ -171,7 +196,7 @@ const StoriesZone = {
                     <span class="pager-status">Trang ${this.readPageIndex} / ${totalPages}</span>
                     ${isLastPage ? `
                         <button class="pager-btn" style="background:linear-gradient(135deg, #f59e0b, #ef4444); color:#fff; box-shadow:0 3px 10px rgba(239, 68, 68, 0.4);" onclick="StoriesZone.switchMode('interact')">
-                            🎭 Sang Tương Tác Ngay ➔
+                            🎭 Sang Tương Tác ➔
                         </button>
                     ` : `
                         <button class="pager-btn btn-next" onclick="StoriesZone.nextReadPage()">
@@ -182,13 +207,14 @@ const StoriesZone = {
             </div>
         `;
 
-        // Tự động đọc câu chuyện
+        // Tự động phát âm thanh lời kể và kích hoạt tiến triển liên tục
         setTimeout(() => {
-            this.speakCurrentReadPage();
+            this.speakCurrentReadPage(false);
         }, 300);
     },
 
     prevReadPage() {
+        this.clearTimers();
         if (this.readPageIndex > 1) {
             this.readPageIndex--;
             if (typeof SoundEngine !== 'undefined') SoundEngine.playPop();
@@ -197,22 +223,50 @@ const StoriesZone = {
     },
 
     nextReadPage() {
+        this.clearTimers();
         const story = STORIES_DATA.find(s => s.id === this.currentStoryId) || STORIES_DATA[0];
         if (this.readPageIndex < story.readingPages.length) {
             this.readPageIndex++;
             if (typeof SoundEngine !== 'undefined') SoundEngine.playPop();
             this.renderReadMode();
+        } else {
+            // Đã hết trang -> Tự động chuyển tiếp sang Tương Tác
+            this.switchMode('interact');
         }
     },
 
-    speakCurrentReadPage() {
+    speakCurrentReadPage(isManualReplay = false) {
+        this.clearTimers();
         const story = STORIES_DATA.find(s => s.id === this.currentStoryId) || STORIES_DATA[0];
         const page = story.readingPages.find(p => p.pageIndex === this.readPageIndex);
-        if (page && page.voiceText && typeof SoundEngine !== 'undefined') {
+        if (!page || !page.voiceText) return;
+
+        const onAudioEnd = () => {
+            // Khi âm thanh kết thúc: kích hoạt thanh đếm lùi 2s và tự động lật tiếp
+            const bar = document.getElementById('story-advance-bar');
+            if (bar) bar.style.width = '100%';
+
+            this.autoAdvanceTimer = setTimeout(() => {
+                if (this.currentMode === 'read') {
+                    if (this.readPageIndex < story.readingPages.length) {
+                        this.nextReadPage();
+                    } else {
+                        // Kết thúc trang cuối -> Tiến triển liền mạch sang Tương Tác
+                        if (typeof SoundEngine !== 'undefined') {
+                            SoundEngine.playCheer();
+                            SoundEngine.speakFallback("Bé đã đọc xong câu chuyện thật tuyệt vời! Bây giờ chúng mình cùng sang phần tương tác nhé!");
+                        }
+                        this.switchMode('interact');
+                    }
+                }
+            }, 2000);
+        };
+
+        if (typeof SoundEngine !== 'undefined') {
             if (page.audioKey) {
-                SoundEngine.playVoice(page.audioKey, null, page.voiceText);
+                SoundEngine.playVoice(page.audioKey, onAudioEnd, page.voiceText);
             } else {
-                SoundEngine.speakFallback(page.voiceText);
+                SoundEngine.speakFallback(page.voiceText, onAudioEnd);
             }
         }
     },
@@ -230,8 +284,10 @@ const StoriesZone = {
 
     /* ========================================================
        PHẦN 2: TƯƠNG TÁC TRUYỆN & THU HOẠCH KIẾN THỨC
+       (TIẾN TRIỂN LIÊN TỤC: HÀNH ĐỘNG ➔ CÂU HỎI ➔ VINH DANH)
        ======================================================== */
     renderInteractMode(container) {
+        this.clearTimers();
         if (!container) container = document.getElementById('stories-content');
         if (!container) return;
 
@@ -257,7 +313,7 @@ const StoriesZone = {
                         🎯 Chặng 1/2: Hành Động Cứu Giúp Nhân Vật
                     </div>
                     <button class="kid-pill-compact" style="background:#0284c7; color:#fff; border-color:#0284c7; padding:2px 8px; font-size:11px;" onclick="StoriesZone.speakActionQuest()">
-                        🔊 Nghe Nhiệm Vụ
+                        🔊 Nghe Lại
                     </button>
                 </div>
 
@@ -271,7 +327,7 @@ const StoriesZone = {
                     ${this.generateActionStageHTML(story)}
                 </div>
 
-                <!-- PHẢN HỒI VÀ NÚT CHUYỂN TIẾP -->
+                <!-- PHẢN HỒI VÀ TIẾN TRIỂN TIẾP -->
                 <div style="flex:0 0 auto; display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:6px; min-height:42px;">
                     <div id="action-feedback-line" style="font-size:12px; font-weight:800; color:#0369a1; flex:1;">
                         👆 Bé hãy thực hiện hành động trên sa bàn nhé!
@@ -374,10 +430,12 @@ const StoriesZone = {
         if (stage) stage.innerHTML = this.generateActionStageHTML(STORIES_DATA.find(s => s.id === this.currentStoryId));
 
         const fb = document.getElementById('action-feedback-line');
-        if (fb) fb.innerHTML = '🎉 <strong>Tuyệt vời!</strong> Bạn Thỏ đã an toàn! Bé bấm nút bên dưới để trả lời câu hỏi nhé!';
+        if (fb) fb.innerHTML = '🎉 <strong>Tuyệt vời!</strong> Đang tự động chuyển sang câu hỏi thực tế...';
 
-        const nextBtn = document.getElementById('btn-next-to-quiz');
-        if (nextBtn) nextBtn.style.display = 'block';
+        // Tự động tiến triển sang câu hỏi thực tế sau 2.0s
+        setTimeout(() => {
+            this.proceedToQuiz();
+        }, 2000);
     },
 
     triggerTurtleCheer() {
@@ -394,10 +452,11 @@ const StoriesZone = {
             if (typeof App !== 'undefined' && App.addStar) App.addStar();
 
             const fb = document.getElementById('action-feedback-line');
-            if (fb) fb.innerHTML = '🎉 <strong>Xuất sắc!</strong> Bạn Rùa đã chiến thắng! Bé bấm nút bên dưới nhé!';
+            if (fb) fb.innerHTML = '🎉 <strong>Xuất sắc!</strong> Đang tự động chuyển sang câu hỏi thực tế...';
 
-            const nextBtn = document.getElementById('btn-next-to-quiz');
-            if (nextBtn) nextBtn.style.display = 'block';
+            setTimeout(() => {
+                this.proceedToQuiz();
+            }, 2000);
         } else {
             if (typeof SoundEngine !== 'undefined') {
                 SoundEngine.speakFallback(`Cố lên bạn Rùa! Bước thứ ${this.actionState.clicks}!`);
@@ -424,10 +483,11 @@ const StoriesZone = {
                 if (typeof App !== 'undefined' && App.addStar) App.addStar();
 
                 const fb = document.getElementById('action-feedback-line');
-                if (fb) fb.innerHTML = '🎉 <strong>Hoan hô!</strong> Củ cải đã nhổ lên thành công! Bé bấm nút bên dưới nhé!';
+                if (fb) fb.innerHTML = '🎉 <strong>Hoan hô!</strong> Đang tự động chuyển sang câu hỏi thực tế...';
 
-                const nextBtn = document.getElementById('btn-next-to-quiz');
-                if (nextBtn) nextBtn.style.display = 'block';
+                setTimeout(() => {
+                    this.proceedToQuiz();
+                }, 2000);
             }
 
             const stage = document.getElementById('story-action-stage');
@@ -464,7 +524,7 @@ const StoriesZone = {
                 <!-- TIÊU ĐỀ CHẶNG 2 -->
                 <div style="flex:0 0 auto; display:flex; align-items:center; justify-content:space-between; background:#fef3c7; border:2px solid #f59e0b; border-radius:14px; padding:6px 12px; margin-bottom:6px;">
                     <div style="font-size:13px; font-weight:900; color:#b45309;">
-                        💡 Chặng 2/2: Bài Học Cuộc Sống Thực Tế (Câu ${this.quizIndex + 1}/${quizzes.length})
+                        💡 Chặng 2/2: Bài Học Cuộc Sống Thực Tế (${this.quizIndex + 1}/${quizzes.length})
                     </div>
                     <button class="kid-pill-compact" style="background:#f59e0b; color:#fff; border-color:#f59e0b; padding:2px 8px; font-size:11px;" onclick="StoriesZone.speakCurrentQuiz()">
                         🔊 Nghe Câu Hỏi
@@ -529,10 +589,11 @@ const StoriesZone = {
                 fb.innerHTML = `🎉 <strong style="color:#10b981;">Chính xác!</strong> ${opt.feedback} ⭐ +1 Sao`;
             }
 
+            // Tự động tiến triển sang câu hỏi tiếp theo hoặc vinh danh sau 2.2s
             setTimeout(() => {
                 this.quizIndex++;
                 this.renderLifeSkillQuiz(document.getElementById('stories-content'));
-            }, 2500);
+            }, 2200);
         } else {
             if (btnEl) {
                 btnEl.classList.add('wrong-choice');
@@ -553,7 +614,6 @@ const StoriesZone = {
         const story = STORIES_DATA.find(s => s.id === this.currentStoryId) || STORIES_DATA[0];
         const badge = story.badgeReward;
 
-        // Thưởng 3 sao vàng cho bé
         if (typeof App !== 'undefined' && App.addStar) {
             App.addStar();
             App.addStar();

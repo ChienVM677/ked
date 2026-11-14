@@ -632,8 +632,66 @@ body {
 }
 
 /* ========================================================
-   VƯỜN CỔ TÍCH ZERO-SCROLL (ĐỌC TRUYỆN & TƯƠNG TÁC THU HOẠCH)
+   VƯỜN CỔ TÍCH ZERO-SCROLL (2 BẬC DANH MỤC GỘP 1 DÒNG & TIẾN TRIỂN LIÊN TỤC)
    ======================================================== */
+
+.story-top-control-bar {
+    flex: 0 0 auto !important;
+    height: 38px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+    margin-bottom: 6px !important;
+    width: 100% !important;
+}
+
+/* Bậc 2: Segmented Control [ 📖 Đọc | 🎭 Tương Tác ] */
+.story-segmented-mode {
+    display: flex !important;
+    background: #e2e8f0 !important;
+    border-radius: 9999px !important;
+    padding: 2px !important;
+    gap: 2px !important;
+}
+
+.story-mode-toggle-btn {
+    padding: 5px 12px !important;
+    border-radius: 9999px !important;
+    border: none !important;
+    background: transparent !important;
+    color: #475569 !important;
+    font-size: 12px !important;
+    font-weight: 900 !important;
+    font-family: var(--font-kids) !important;
+    cursor: pointer !important;
+    white-space: nowrap !important;
+    transition: all 0.2s ease !important;
+}
+
+.story-mode-toggle-btn.active {
+    background: #ffffff !important;
+    color: #0284c7 !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Chỉ báo đếm lùi tự động lật trang */
+.story-auto-advance-indicator {
+    height: 3px !important;
+    background: #e2e8f0 !important;
+    border-radius: 9999px !important;
+    overflow: hidden !important;
+    width: 100% !important;
+    margin-top: 2px !important;
+}
+
+.story-auto-advance-bar {
+    height: 100% !important;
+    background: linear-gradient(90deg, #38bdf8, #0284c7) !important;
+    width: 0%;
+    transition: width 2s linear !important;
+}
+
 
 .story-stage-viewport {
     flex: 1 1 auto !important;
