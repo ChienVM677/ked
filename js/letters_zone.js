@@ -455,27 +455,38 @@ const LettersZone = {
     // ========================================================
     // ORCHESTRATION & MENU NAVIGATION
     // ========================================================
+    
+    alphabetPage: 0,
+
     init() {
         this.renderSubMenu();
         this.switchLevel(this.currentLevel || 1);
+    },
+
+    getLettersPerPage() {
+        return (window.innerWidth <= 768) ? 6 : 8;
     },
 
     renderSubMenu() {
         const subNav = document.getElementById('letters-subnav');
         if (!subNav) return;
         subNav.innerHTML = `
-            <button class="kid-pill ${this.currentLevel === 1 ? 'active' : ''}" onclick="LettersZone.switchLevel(1)">
-                🔤 Cấp 1: 29 Chữ Cái
-            </button>
-            <button class="kid-pill ${this.currentLevel === 2 ? 'active' : ''}" onclick="LettersZone.switchLevel(2)">
-                🎵 Cấp 2: Luyện Vần & 5 Dấu
-            </button>
-            <button class="kid-pill ${this.currentLevel === 3 ? 'active' : ''}" onclick="LettersZone.switchLevel(3)">
-                🧩 Cấp 3: 11 Phụ Âm Ghép
-            </button>
-            <button class="kid-pill ${this.currentLevel === 4 ? 'active' : ''}" onclick="LettersZone.switchLevel(4)">
-                🚀 Cấp 4: Ghép Vần Tăng Tiến
-            </button>
+            <div class="zero-scroll-subbar">
+                <div class="mode-switch-group">
+                    <button class="kid-pill-compact ${this.currentLevel === 1 ? 'active' : ''}" onclick="LettersZone.switchLevel(1)">
+                        🔤 29 Chữ
+                    </button>
+                    <button class="kid-pill-compact ${this.currentLevel === 2 ? 'active' : ''}" onclick="LettersZone.switchLevel(2)">
+                        🎵 5 Dấu
+                    </button>
+                    <button class="kid-pill-compact ${this.currentLevel === 3 ? 'active' : ''}" onclick="LettersZone.switchLevel(3)">
+                        🧩 Phụ Âm
+                    </button>
+                    <button class="kid-pill-compact ${this.currentLevel === 4 ? 'active' : ''}" onclick="LettersZone.switchLevel(4)">
+                        🚀 Ghép Vần
+                    </button>
+                </div>
+            </div>
         `;
     },
 
@@ -483,7 +494,7 @@ const LettersZone = {
         this.currentLevel = level;
         if (typeof SoundEngine !== 'undefined') SoundEngine.playPop();
 
-        const pills = document.querySelectorAll('#letters-subnav .kid-pill');
+        const pills = document.querySelectorAll('#letters-subnav .kid-pill-compact');
         pills.forEach((p, idx) => p.classList.toggle('active', idx + 1 === level));
 
         const container = document.getElementById('letters-content');
@@ -501,28 +512,66 @@ const LettersZone = {
     },
 
     // ========================================================
-    // CẤP 1: BẢNG 29 CHỮ CÁI TIẾNG VIỆT
+    // CẤP 1: TOA TÀU 29 CHỮ CÁI (CAROUSEL 6 CHỮ / TRANG)
     // ========================================================
     renderLevel1(container) {
-        container.innerHTML = `
-            <div class="level-intro">
-                <h2>🔤 Cấp 1: Bảng 29 Chữ Cái Tiếng Việt Chuẩn Âm</h2>
-                <p>Bé chạm vào từng chữ cái để nghe cô giáo đọc chuẩn tên chữ và từ minh họa nhé!</p>
-            </div>
+        if (!container) container = document.getElementById('letters-content');
+        if (!container) return;
 
-            <div class="alphabet-kid-grid">
-                ${this.alphabetList.map((item, idx) => `
-                    <div class="alphabet-kid-card" style="border-bottom-color:${item.color}" onclick="LettersZone.clickLetter(${idx})">
-                        <span class="char-symbol" style="color:${item.color}">${item.char}</span>
-                        <span class="char-lower">${item.char.toLowerCase()}</span>
-                        <div class="char-mini-word">
-                            <span class="mini-icon">${item.icon}</span>
-                            <span class="mini-name">${item.word}</span>
-                        </div>
-                    </div>
-                `).join('')}
+        const perPage = this.getLettersPerPage();
+        const totalPages = Math.ceil(this.alphabetList.length / perPage) || 1;
+        if (this.alphabetPage >= totalPages) this.alphabetPage = 0;
+        if (this.alphabetPage < 0) this.alphabetPage = 0;
+
+        const pageLetters = this.alphabetList.slice(this.alphabetPage * perPage, (this.alphabetPage + 1) * perPage);
+
+        container.innerHTML = `
+            <div style="flex:1 1 auto; min-height:0; height:100%; display:flex; flex-direction:column; justify-content:space-between; overflow:hidden;">
+                <!-- LƯỚI 6 CHỮ CÁI CỰC ĐẠI (3x2) -->
+                <div class="paged-alphabet-grid">
+                    ${pageLetters.map((item, idx) => {
+                        const globalIdx = this.alphabetPage * perPage + idx;
+                        return `
+                            <div class="paged-letter-card" style="border-bottom-color:${item.color}" onclick="LettersZone.clickLetter(${globalIdx})">
+                                <span class="paged-char-symbol" style="color:${item.color}">${item.char}</span>
+                                <span class="paged-char-sub">${item.char.toLowerCase()}</span>
+                                <div class="paged-char-word">
+                                    <span>${item.icon}</span> <span>${item.word}</span>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+
+                <!-- THANH LẬT TRANG TOA TÀU CHỮ CÁI -->
+                <div class="zero-scroll-pager">
+                    <button class="pager-btn btn-prev" onclick="LettersZone.prevAlphabetPage()" ${this.alphabetPage === 0 ? 'disabled' : ''}>
+                        ◀ Trước
+                    </button>
+                    <span class="pager-status">Trang ${this.alphabetPage + 1} / ${totalPages} (Chữ ${this.alphabetPage * perPage + 1} - ${Math.min((this.alphabetPage + 1) * perPage, 29)})</span>
+                    <button class="pager-btn btn-next" onclick="LettersZone.nextAlphabetPage()" ${this.alphabetPage >= totalPages - 1 ? 'disabled' : ''}>
+                        Tiếp ▶
+                    </button>
+                </div>
             </div>
         `;
+    },
+
+    prevAlphabetPage() {
+        if (this.alphabetPage > 0) {
+            this.alphabetPage--;
+            if (typeof SoundEngine !== 'undefined') SoundEngine.playPop();
+            this.renderLevel1();
+        }
+    },
+
+    nextAlphabetPage() {
+        const totalPages = Math.ceil(this.alphabetList.length / this.getLettersPerPage()) || 1;
+        if (this.alphabetPage < totalPages - 1) {
+            this.alphabetPage++;
+            if (typeof SoundEngine !== 'undefined') SoundEngine.playPop();
+            this.renderLevel1();
+        }
     },
 
     clickLetter(idx) {
@@ -534,9 +583,12 @@ const LettersZone = {
     },
 
     // ========================================================
-    // CẤP 2: LUYỆN TỪNG VẦN & MA TRẬN 5 DẤU THANH KẾT HỢP
+    // CẤP 2: MA TRẬN 5 DẤU THANH (ZERO-SCROLL 6 THẺ)
     // ========================================================
     renderLevel2(container) {
+        if (!container) container = document.getElementById('letters-content');
+        if (!container) return;
+
         const isSingle = this.vowelType === 'single';
         const currentData = isSingle ? this.singleVowelsMatrix : this.compoundVowelsMatrix;
         const keys = Object.keys(currentData);
@@ -546,74 +598,94 @@ const LettersZone = {
         const curMatrix = currentData[this.selectedVowelKey];
 
         container.innerHTML = `
-            <div class="level-intro">
-                <h2>🎵 Cấp 2: Luyện Từng Vần Kết Hợp 5 Dấu Thanh</h2>
-                <p>Bé chọn một nguyên âm bên dưới, sau đó chạm vào từng ô chữ để nghe đánh vần từng dấu thanh nhé!</p>
-            </div>
-
-            <!-- CHUYỂN ĐỔI: 12 NGUYÊN ÂM ĐƠN vs 12 NGUYÊN ÂM KÉP -->
-            <div style="display:flex; justify-content:center; gap:10px; margin-bottom:12px; flex-wrap:wrap;">
-                <button class="kid-pill ${isSingle ? 'active' : ''}" style="font-size:14px; padding:8px 18px;" onclick="LettersZone.switchVowelType('single')">
-                    🔤 12 Nguyên Âm Đơn (A, Ă, Â, E, Ê...)
-                </button>
-                <button class="kid-pill ${!isSingle ? 'active' : ''}" style="font-size:14px; padding:8px 18px; background:linear-gradient(135deg, #ec4899, #db2777); color:#fff;" onclick="LettersZone.switchVowelType('compound')">
-                    ✨ Nguyên Âm Kép (AI, AO, EO, OA...)
-                </button>
-            </div>
-
-            <!-- THANH CHỌN NGUYÊN ÂM VUỐT NGANG -->
-            <div class="vowel-selector-bar">
-                ${keys.map(k => `
-                    <button class="vowel-pill ${k === this.selectedVowelKey ? 'active' : ''}" onclick="LettersZone.selectVowel('${k}')">
-                        ${currentData[k].char}
+            <div style="flex:1 1 auto; min-height:0; height:100%; display:flex; flex-direction:column; justify-content:space-between; overflow:hidden;">
+                <!-- BỘ CHỌN NGUYÊN ÂM POPOVER GỌN GÀNG -->
+                <div style="flex:0 0 auto; display:flex; align-items:center; justify-content:space-between; gap:6px; margin-bottom:6px;">
+                    <button class="vowel-picker-btn" onclick="LettersZone.openVowelModal()">
+                        <span>🔤 Nguyên Âm: <strong>${curMatrix.char}</strong></span> <span style="font-size:10px;">▾ Đổi chữ</span>
                     </button>
-                `).join('')}
-            </div>
-
-            <!-- BANNER NGUYÊN ÂM ĐANG CHỌN -->
-            <div class="vowel-spotlight-banner">
-                <span class="vowel-spotlight-char">${curMatrix.char}</span>
-                <div>
-                    <div class="vowel-spotlight-title">${curMatrix.name}</div>
-                    <div class="vowel-spotlight-subtitle">Bé hãy bấm vào từng chữ bên dưới để tập đọc 6 thanh điệu nhé!</div>
+                    <button class="kid-pill-compact" style="background:#fdf2f8; border-color:#ec4899; color:#db2777;" onclick="LettersZone.toggleVowelType()">
+                        ${isSingle ? 'Đơn ➔ Đôi' : 'Đôi ➔ Đơn'}
+                    </button>
                 </div>
-            </div>
 
-            <!-- MA TRẬN 6 THẺ CHỮ VÀ DẤU THANH KẾT HỢP -->
-            <div class="vowel-tone-matrix-grid">
-                ${curMatrix.tones.map((t, i) => `
-                    <div class="vowel-tone-card" id="tone-card-${i}" style="border-top-color:${t.color};" onclick="LettersZone.applyTone(${i})">
-                        <div class="tone-card-top">
-                            <span class="tone-badge" style="background:${t.color}22; color:${t.color};">${t.name}</span>
+                <!-- MA TRẬN 6 DẤU THANH (2x3) VỪA KHÍT 1 MÀN HÌNH -->
+                <div class="paged-tones-grid">
+                    ${curMatrix.tones.map((t, i) => `
+                        <div class="paged-tone-card" id="tone-card-${i}" style="border-top-color:${t.color};" onclick="LettersZone.applyTone(${i})">
+                            <div style="display:flex; flex-direction:column; align-items:flex-start;">
+                                <span style="font-size:10px; font-weight:800; color:${t.color}; background:${t.color}15; padding:1px 6px; border-radius:6px;">${t.name}</span>
+                                <span style="font-size:11px; font-weight:800; color:#475569; margin-top:2px;">${t.spell}</span>
+                                <span style="font-size:11px; font-weight:900; color:#1e293b; margin-top:2px;">${t.icon || '🌟'} ${t.word || ''}</span>
+                            </div>
+                            <div style="text-align:right;">
+                                <span style="font-size:32px; font-weight:900; color:${t.color}; line-height:1;">${t.sample}</span>
+                                <span style="font-size:14px; font-weight:800; color:#64748b; display:block;">${t.sample.toLowerCase()}</span>
+                            </div>
                         </div>
-                        <div class="tone-card-char-box">
-                            <span class="tone-char-big" style="color:${t.color};">${t.sample}</span>
-                            <span class="tone-char-small">${t.sample.toLowerCase()}</span>
-                        </div>
-                        <div class="tone-card-spell">${t.spell}</div>
-                        <div class="tone-card-vocab">
-                            <span class="vocab-icon">${t.icon || '🌟'}</span>
-                            <span class="vocab-text">${t.word || ''}</span>
-                        </div>
-                    </div>
-                `).join('')}
+                    `).join('')}
+                </div>
+
+                <!-- HƯỚNG DẪN DƯỚI ĐÁY -->
+                <div style="flex:0 0 auto; text-align:center; font-size:11px; font-weight:800; color:#0369a1; padding:2px 0;">
+                    💡 Bé chạm vào từng ô chữ để nghe phát âm từng dấu thanh nhé!
+                </div>
             </div>
         `;
     },
 
-    switchVowelType(type) {
-        this.vowelType = type;
-        this.selectedVowelKey = type === 'single' ? 'a' : 'ai';
+    toggleVowelType() {
+        this.vowelType = (this.vowelType === 'single') ? 'compound' : 'single';
+        this.selectedVowelKey = (this.vowelType === 'single') ? 'a' : 'ai';
         if (typeof SoundEngine !== 'undefined') SoundEngine.playPop();
-        this.renderLevel2(document.getElementById('letters-content'));
+        this.renderLevel2();
     },
 
-    selectVowel(vowelKey) {
-        this.selectedVowelKey = vowelKey;
+    openVowelModal() {
         if (typeof SoundEngine !== 'undefined') SoundEngine.playPop();
-        this.renderLevel2(document.getElementById('letters-content'));
+        let modal = document.getElementById('letters-vowel-modal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'letters-vowel-modal';
+            modal.className = 'zero-scroll-modal-overlay';
+            document.body.appendChild(modal);
+        }
+
+        const isSingle = this.vowelType === 'single';
+        const currentData = isSingle ? this.singleVowelsMatrix : this.compoundVowelsMatrix;
+        const keys = Object.keys(currentData);
+
+        modal.innerHTML = `
+            <div class="zero-scroll-modal-card">
+                <div class="modal-header-row">
+                    <span class="modal-header-title">🔤 CHỌN NGUYÊN ÂM LUYỆN DẤU</span>
+                    <button class="modal-close-btn" onclick="LettersZone.closeVowelModal()">✕</button>
+                </div>
+                <div class="modal-grid-palette" style="grid-template-columns:repeat(4, 1fr);">
+                    ${keys.map(k => `
+                        <button class="palette-item-btn ${this.selectedVowelKey === k ? 'active' : ''}" onclick="LettersZone.selectVowelAndClose('${k}')">
+                            <span style="font-size:24px; font-weight:900; color:#0369a1;">${currentData[k].char}</span>
+                            <span class="palette-label">${currentData[k].char.toLowerCase()}</span>
+                        </button>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+        modal.style.display = 'flex';
+    },
+
+    closeVowelModal() {
+        const modal = document.getElementById('letters-vowel-modal');
+        if (modal) modal.style.display = 'none';
+    },
+
+    selectVowelAndClose(key) {
+        this.selectedVowelKey = key;
+        if (typeof SoundEngine !== 'undefined') SoundEngine.playPop();
+        this.closeVowelModal();
+        this.renderLevel2();
         const currentData = this.vowelType === 'single' ? this.singleVowelsMatrix : this.compoundVowelsMatrix;
-        const m = currentData[vowelKey];
+        const m = currentData[key];
         if (m && m.tones[0] && typeof SoundEngine !== 'undefined') {
             SoundEngine.playVoice(m.tones[0].audioKey, null, `${m.name}. ${m.tones[0].word}`);
         }
@@ -631,7 +703,6 @@ const LettersZone = {
             SoundEngine.playVoice(tone.audioKey, null, voiceText);
         }
 
-        // Hiệu ứng nảy sinh động trên thẻ
         const cardEl = document.getElementById(`tone-card-${toneIndex}`);
         if (cardEl) {
             cardEl.classList.add('jump-anim');
@@ -640,9 +711,12 @@ const LettersZone = {
     },
 
     // ========================================================
-    // CẤP 3: 11 PHỤ ÂM GHÉP CĂN BẢN (CH, GH, GI, KH, NH, NG...)
+    // CẤP 3: 11 PHỤ ÂM GHÉP (ZERO-SCROLL TỪ GHÉP)
     // ========================================================
     renderLevel3Compound(container) {
+        if (!container) container = document.getElementById('letters-content');
+        if (!container) return;
+
         const conList = this.compoundConsonantsList;
         let cur = conList.find(c => c.code === this.selectedCompoundCon);
         if (!cur) {
@@ -651,62 +725,76 @@ const LettersZone = {
         }
 
         container.innerHTML = `
-            <div class="level-intro">
-                <h2>🧩 Cấp 3: 11 Phụ Âm Ghép Căn Bản</h2>
-                <p>Bé chọn một phụ âm ghép để khám phá cách kết hợp với nguyên âm và dấu thanh nhé!</p>
-            </div>
-
-            <!-- THANH CHỌN 11 PHỤ ÂM GHÉP VUỐT NGANG -->
-            <div class="compound-consonants-bar">
-                ${conList.map(c => `
-                    <button class="compound-con-btn ${c.code === cur.code ? 'active' : ''}" style="border-color:${c.color};" onclick="LettersZone.selectCompoundConsonant('${c.code}')">
-                        <span class="con-char" style="color:${c.color};">${c.char}</span>
-                        <span class="con-icon">${c.icon}</span>
+            <div style="flex:1 1 auto; min-height:0; height:100%; display:flex; flex-direction:column; justify-content:space-between; overflow:hidden;">
+                <!-- BỘ CHỌN PHỤ ÂM GHÉP POPOVER -->
+                <div style="flex:0 0 auto; display:flex; align-items:center; justify-content:space-between; gap:6px; margin-bottom:6px;">
+                    <button class="consonant-picker-btn" onclick="LettersZone.openConsonantModal()">
+                        <span>🧩 Phụ Âm: <strong>${cur.char}</strong> (${cur.name})</span> <span style="font-size:10px;">▾ Đổi chữ</span>
                     </button>
-                `).join('')}
-            </div>
-
-            <!-- THẺ SPOTLIGHT PHỤ ÂM GHÉP ĐANG CHỌN -->
-            <div class="compound-spotlight-card" style="border-left-color:${cur.color};">
-                <div class="spotlight-left">
-                    <span class="spotlight-char" style="color:${cur.color};">${cur.char}</span>
-                    <span class="spotlight-lower">${cur.char.toLowerCase()}</span>
-                </div>
-                <div class="spotlight-right">
-                    <div class="spotlight-title">${cur.name}</div>
-                    <div class="spotlight-desc">${cur.desc}</div>
-                    <button class="voice-btn-pill" onclick="LettersZone.playCompoundCon('${cur.code}')">
-                        🔊 Nghe cô phát âm chữ ${cur.char}
+                    <button class="pager-btn" style="background:#0284c7; color:#fff; padding:6px 14px; font-size:12px;" onclick="LettersZone.playCompoundCon('${cur.code}')">
+                        🔊 Nghe cô đọc
                     </button>
                 </div>
-            </div>
 
-            <!-- LƯỚI TỪ GHÉP ÂM MINH HỌA -->
-            <div class="compound-pairs-intro">
-                ✨ Bé hãy chạm vào các từ ghép bên dưới để nghe cô giáo đánh vần nhé:
-            </div>
-
-            <div class="compound-pairs-grid">
-                ${cur.pairs.map((p, idx) => `
-                    <div class="compound-pair-card" id="pair-card-${idx}" onclick="LettersZone.clickCompoundPair('${cur.code}', ${idx})">
-                        <div class="pair-formula-badge">${p.spellText}</div>
-                        <div class="pair-main-row">
-                            <span class="pair-icon">${p.icon}</span>
-                            <div>
-                                <div class="pair-word">${p.word}</div>
-                                <div class="pair-meaning">${p.meaning}</div>
-                            </div>
+                <!-- LƯỚI TỪ GHÉP ÂM (2x2 hoặc 2x3) VỪA KHÍT 1 MÀN HÌNH -->
+                <div class="paged-flashcards-grid">
+                    ${cur.pairs.slice(0, 4).map((p, idx) => `
+                        <div class="paged-card-item" id="pair-card-${idx}" onclick="LettersZone.clickCompoundPair('${cur.code}', ${idx})">
+                            <span style="font-size:10px; font-weight:800; background:#f1f5f9; color:#475569; padding:2px 8px; border-radius:6px;">${p.spellText}</span>
+                            <span class="paged-card-icon" style="font-size:clamp(32px, 7vh, 46px);">${p.icon}</span>
+                            <span class="paged-card-label" style="color:#0369a1;">${p.word}</span>
+                            <span style="font-size:11px; font-weight:800; color:#64748b;">${p.meaning}</span>
                         </div>
-                    </div>
-                `).join('')}
+                    `).join('')}
+                </div>
+
+                <!-- HƯỚNG DẪN DƯỚI ĐÁY -->
+                <div style="flex:0 0 auto; text-align:center; font-size:11px; font-weight:800; color:#0369a1; padding:2px 0;">
+                    💡 Bé chạm vào từng từ để nghe cô giáo đánh vần nhé!
+                </div>
             </div>
         `;
     },
 
-    selectCompoundConsonant(code) {
+    openConsonantModal() {
+        if (typeof SoundEngine !== 'undefined') SoundEngine.playPop();
+        let modal = document.getElementById('letters-consonant-modal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'letters-consonant-modal';
+            modal.className = 'zero-scroll-modal-overlay';
+            document.body.appendChild(modal);
+        }
+
+        modal.innerHTML = `
+            <div class="zero-scroll-modal-card">
+                <div class="modal-header-row">
+                    <span class="modal-header-title">🧩 CHỌN 11 PHỤ ÂM GHÉP</span>
+                    <button class="modal-close-btn" onclick="LettersZone.closeConsonantModal()">✕</button>
+                </div>
+                <div class="modal-grid-palette" style="grid-template-columns:repeat(3, 1fr);">
+                    ${this.compoundConsonantsList.map(c => `
+                        <button class="palette-item-btn ${this.selectedCompoundCon === c.code ? 'active' : ''}" onclick="LettersZone.selectConsonantAndClose('${c.code}')">
+                            <span style="font-size:22px; font-weight:900; color:${c.color};">${c.char}</span>
+                            <span class="palette-label">${c.name}</span>
+                        </button>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+        modal.style.display = 'flex';
+    },
+
+    closeConsonantModal() {
+        const modal = document.getElementById('letters-consonant-modal');
+        if (modal) modal.style.display = 'none';
+    },
+
+    selectConsonantAndClose(code) {
         this.selectedCompoundCon = code;
         if (typeof SoundEngine !== 'undefined') SoundEngine.playPop();
-        this.renderLevel3Compound(document.getElementById('letters-content'));
+        this.closeConsonantModal();
+        this.renderLevel3Compound();
         this.playCompoundCon(code);
     },
 
@@ -737,9 +825,12 @@ const LettersZone = {
     },
 
     // ========================================================
-    // CẤP 4: BÉ TẬP GHÉP VẦN TĂNG TIẾN (INTERACTIVE PHONICS)
+    // CẤP 4: BÉ TẬP GHÉP VẦN TĂNG TIẾN (ZERO-SCROLL)
     // ========================================================
     renderLevel4Spelling(container) {
+        if (!container) container = document.getElementById('letters-content');
+        if (!container) return;
+
         const wordPool = this.progressiveSpelling[this.spellingLevel] || this.progressiveSpelling[1];
         if (this.currentSpellingIndex >= wordPool.length) {
             this.currentSpellingIndex = 0;
@@ -748,61 +839,51 @@ const LettersZone = {
         this.selectedLetters = [];
 
         container.innerHTML = `
-            <div class="level-intro">
-                <h2>🚀 Cấp 4: Bé Tập Ghép Vần Tăng Tiến</h2>
-                <p>Bé hãy chọn cấp độ và chạm vào các chữ cái theo đúng thứ tự để tạo thành từ nhé!</p>
-            </div>
-
-            <!-- 4 CẤP ĐỘ ĐỘ KHÓ -->
-            <div class="spelling-level-selector">
-                <button class="spelling-lvl-btn ${this.spellingLevel === 1 ? 'active' : ''}" onclick="LettersZone.switchSpellingLevel(1)">
-                    🌱 Cấp 1: Vần Đơn 2 Chữ
-                </button>
-                <button class="spelling-lvl-btn ${this.spellingLevel === 2 ? 'active' : ''}" onclick="LettersZone.switchSpellingLevel(2)">
-                    🌿 Cấp 2: Kèm Dấu Thanh
-                </button>
-                <button class="spelling-lvl-btn ${this.spellingLevel === 3 ? 'active' : ''}" onclick="LettersZone.switchSpellingLevel(3)">
-                    🌳 Cấp 3: Vần Ghép Kép
-                </button>
-                <button class="spelling-lvl-btn ${this.spellingLevel === 4 ? 'active' : ''}" onclick="LettersZone.switchSpellingLevel(4)">
-                    ⭐ Cấp 4: Từ Ghép Đa Âm
-                </button>
-            </div>
-
-            <div class="spelling-card-stage" style="background:${cur.bg};">
-                <div class="spelling-mascot-box">
-                    <span class="spelling-mascot-icon">${cur.illustration}</span>
-                    <div class="spelling-meaning-text">${cur.meaning}</div>
+            <div style="flex:1 1 auto; min-height:0; height:100%; display:flex; flex-direction:column; justify-content:space-between; overflow:hidden;">
+                <!-- 4 CẤP ĐỘ ĐỘ KHÓ GỌN GÀNG -->
+                <div style="flex:0 0 auto; display:flex; justify-content:center; gap:6px; margin-bottom:6px; flex-wrap:nowrap; overflow-x:auto;">
+                    <button class="kid-pill-compact ${this.spellingLevel === 1 ? 'active' : ''}" onclick="LettersZone.switchSpellingLevel(1)">Cấp 1</button>
+                    <button class="kid-pill-compact ${this.spellingLevel === 2 ? 'active' : ''}" onclick="LettersZone.switchSpellingLevel(2)">Cấp 2 (+Dấu)</button>
+                    <button class="kid-pill-compact ${this.spellingLevel === 3 ? 'active' : ''}" onclick="LettersZone.switchSpellingLevel(3)">Cấp 3 (Ghép)</button>
+                    <button class="kid-pill-compact ${this.spellingLevel === 4 ? 'active' : ''}" onclick="LettersZone.switchSpellingLevel(4)">Cấp 4 (Đa âm)</button>
                 </div>
 
-                <div class="spelling-formula-display">
-                    ${cur.displaySpell}
+                <!-- KHUNG TRANH VÀ CÂU ĐỐ -->
+                <div style="flex:1 1 auto; min-height:0; background:${cur.bg}; border:3px solid #e2e8f0; border-radius:20px; padding:10px; display:flex; flex-direction:column; align-items:center; justify-content:space-around; overflow:hidden;">
+                    <div style="text-align:center;">
+                        <span style="font-size:clamp(40px, 8vh, 60px); display:inline-block;" class="bounce-anim">${cur.illustration}</span>
+                        <div style="font-size:14px; font-weight:800; color:#475569;">${cur.meaning}</div>
+                    </div>
+
+                    <div style="font-size:18px; font-weight:900; color:#0284c7;">
+                        ${cur.displaySpell}
+                    </div>
+
+                    <div class="spelling-slots-row" id="spelling-slots" style="margin:6px 0;">
+                        ${cur.parts.map(() => `<div class="spell-slot-box">?</div>`).join('')}
+                    </div>
+
+                    <div class="spelling-choices-row" id="spelling-choices" style="margin:4px 0;">
+                        ${this.shuffle([...cur.parts]).map(p => `
+                            <button class="spell-choice-btn" onclick="LettersZone.clickSpellingLetter('${p}', this)">${p}</button>
+                        `).join('')}
+                    </div>
+
+                    <div id="spelling-feedback" style="display:none; font-size:13px; font-weight:800; padding:4px 12px; border-radius:10px;"></div>
                 </div>
 
-                <div class="spelling-slots-row" id="spelling-slots">
-                    ${cur.parts.map(() => `<div class="spell-slot-box">?</div>`).join('')}
-                </div>
-
-                <div class="spelling-choices-row" id="spelling-choices">
-                    ${this.shuffle([...cur.parts]).map(p => `
-                        <button class="spell-choice-btn" onclick="LettersZone.clickSpellingLetter('${p}', this)">${p}</button>
-                    `).join('')}
-                </div>
-
-                <div class="spelling-feedback-box" id="spelling-feedback" style="display:none;"></div>
-
-                <div class="spelling-nav-row" style="margin-top:14px; display:flex; justify-content:center; gap:10px;">
-                    <button class="voice-btn-pill" onclick="LettersZone.playSpellingAudio()">
-                        🔊 Nghe cô đọc mẫu
+                <!-- ĐIỀU HƯỚNG DƯỚI ĐÁY -->
+                <div class="zero-scroll-pager">
+                    <button class="pager-btn btn-prev" onclick="LettersZone.playSpellingAudio()">
+                        🔊 Nghe cô đọc
                     </button>
-                    <button class="kid-pill active" onclick="LettersZone.nextSpellingWord()">
+                    <button class="pager-btn btn-next" onclick="LettersZone.nextSpellingWord()">
                         Từ Tiếp Theo ➔
                     </button>
                 </div>
             </div>
         `;
 
-        // Tự động phát âm khi chuyển từ
         setTimeout(() => this.playSpellingAudio(), 300);
     },
 
@@ -819,7 +900,7 @@ const LettersZone = {
         this.spellingLevel = lvl;
         this.currentSpellingIndex = 0;
         if (typeof SoundEngine !== 'undefined') SoundEngine.playPop();
-        this.renderLevel4Spelling(document.getElementById('letters-content'));
+        this.renderLevel4Spelling();
     },
 
     clickSpellingLetter(char, btn) {
@@ -831,7 +912,6 @@ const LettersZone = {
         btn.disabled = true;
         btn.style.opacity = '0.3';
 
-        // Cập nhật các ô slots
         const slotsContainer = document.getElementById('spelling-slots');
         if (slotsContainer) {
             slotsContainer.innerHTML = cur.parts.map((p, idx) => {
@@ -860,14 +940,14 @@ const LettersZone = {
                 SoundEngine.playVoice(cur.audioKey, null, `Hoan hô bé! ${cur.displaySpell}!`);
             }
             if (typeof App !== 'undefined') App.addStar();
-            fb.innerHTML = `🎉 Tuyệt vời! Bé đã đánh vần chính xác: <strong>${cur.word}</strong>!`;
+            fb.innerHTML = `🎉 Bé đã ghép đúng: <strong>${cur.word}</strong>! ⭐`;
             fb.style.color = '#15803d';
             fb.style.background = '#dcfce7';
 
-            setTimeout(() => this.nextSpellingWord(), 2200);
+            setTimeout(() => this.nextSpellingWord(), 2000);
         } else {
             if (typeof SoundEngine !== 'undefined') SoundEngine.playSoftNotice();
-            fb.innerHTML = `Chưa đúng rồi! Bé chạm vào "Từ Tiếp Theo" hoặc thử lại nhé!`;
+            fb.innerHTML = `Chưa đúng rồi! Bé chạm vào "Từ Tiếp Theo" nhé!`;
             fb.style.color = '#b91c1c';
             fb.style.background = '#fee2e2';
 
@@ -890,7 +970,7 @@ const LettersZone = {
     nextSpellingWord() {
         const wordPool = this.progressiveSpelling[this.spellingLevel] || this.progressiveSpelling[1];
         this.currentSpellingIndex = (this.currentSpellingIndex + 1) % wordPool.length;
-        this.renderLevel4Spelling(document.getElementById('letters-content'));
+        this.renderLevel4Spelling();
     },
 
     playSpellingAudio() {

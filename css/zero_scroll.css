@@ -1,0 +1,677 @@
+
+/* ========================================================
+   KED - ZERO-SCROLL PREVIEW & FIXED VIEWPORT STYLING v7.0
+   1 Màn hình không cuộn - 100% không gian cho trẻ mầm non
+   ======================================================== */
+
+html, body {
+    height: 100% !important;
+    height: 100dvh !important;
+    overflow: hidden !important;
+    margin: 0;
+    padding: 0;
+    touch-action: manipulation;
+}
+
+body {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+}
+
+/* Khóa cứng main stage */
+.mobile-stage, .ked-stage {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: auto !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    position: relative !important;
+    padding: 6px 10px 4px !important;
+}
+
+/* Khóa cứng từng phân hệ hiển thị */
+.zone-view.active-zone {
+    height: 100% !important;
+    min-height: 0 !important;
+    flex: 1 1 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    justify-content: space-between !important;
+}
+
+/* Zone header siêu tinh gọn */
+.zone-header {
+    flex: 0 0 auto !important;
+    margin-bottom: 4px !important;
+    padding: 2px 0 !important;
+}
+.zone-title {
+    font-size: 16px !important;
+    font-weight: 900 !important;
+}
+.zone-badge {
+    font-size: 10px !important;
+    padding: 2px 8px !important;
+}
+
+/* THANH ĐIỀU HƯỚNG CONTEXT SIÊU TINH GỌN (ZERO-SCROLL SUBBAR) */
+.zero-scroll-subbar {
+    flex: 0 0 auto !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 6px !important;
+    height: 40px !important;
+    margin-bottom: 6px !important;
+    width: 100% !important;
+}
+
+.mode-switch-group {
+    display: flex !important;
+    gap: 6px !important;
+    align-items: center !important;
+}
+
+.kid-pill-compact {
+    padding: 6px 12px !important;
+    border-radius: 9999px !important;
+    border: 2px solid #cbd5e1 !important;
+    background: #ffffff !important;
+    color: #475569 !important;
+    font-size: 12px !important;
+    font-weight: 900 !important;
+    cursor: pointer !important;
+    font-family: var(--font-kids) !important;
+    white-space: nowrap !important;
+    transition: all 0.2s ease !important;
+}
+
+.kid-pill-compact.active {
+    border-color: #0284c7 !important;
+    background: #0284c7 !important;
+    color: #ffffff !important;
+    box-shadow: 0 3px 8px rgba(2, 132, 199, 0.3) !important;
+}
+
+.topic-picker-btn, .vowel-picker-btn, .consonant-picker-btn {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    padding: 6px 12px !important;
+    border-radius: 9999px !important;
+    background: linear-gradient(135deg, #fef08a, #fed7aa) !important;
+    border: 2px solid #f59e0b !important;
+    color: #78350f !important;
+    font-weight: 900 !important;
+    font-size: 12px !important;
+    cursor: pointer !important;
+    font-family: var(--font-kids) !important;
+    white-space: nowrap !important;
+    box-shadow: 0 2px 6px rgba(245, 158, 11, 0.2) !important;
+}
+
+.topic-picker-btn:active, .vowel-picker-btn:active {
+    transform: scale(0.95) !important;
+}
+
+/* THANH LẬT TRANG DƯỚI ĐÁY KHÔNG CUỘN (ZERO-SCROLL PAGER) */
+.zero-scroll-pager {
+    flex: 0 0 auto !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+    height: 44px !important;
+    padding: 4px 6px !important;
+    margin-top: 4px !important;
+    background: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: blur(8px) !important;
+    border-radius: 16px !important;
+    border: 2px solid #e2e8f0 !important;
+}
+
+.pager-btn {
+    padding: 8px 16px !important;
+    border-radius: 9999px !important;
+    border: none !important;
+    font-weight: 900 !important;
+    font-size: 13px !important;
+    cursor: pointer !important;
+    font-family: var(--font-kids) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+    transition: transform 0.15s ease !important;
+}
+
+.pager-btn.btn-prev {
+    background: #cbd5e1 !important;
+    color: #334155 !important;
+}
+
+.pager-btn.btn-next {
+    background: #10b981 !important;
+    color: #ffffff !important;
+}
+
+.pager-btn:disabled {
+    opacity: 0.3 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+}
+
+.pager-status {
+    font-size: 12px !important;
+    font-weight: 900 !important;
+    color: #0369a1 !important;
+}
+
+/* SÂN CHƠI LƯỚI THẺ KHÔNG CUỘN: VƯƠNG QUỐC HÌNH ẢNH 4 THẺ (2x2) */
+.paged-flashcards-grid {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    grid-template-rows: repeat(2, 1fr) !important;
+    gap: 8px !important;
+    overflow: hidden !important;
+}
+
+.paged-card-item {
+    background: #ffffff !important;
+    border: 3px solid #e2e8f0 !important;
+    border-radius: 18px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    cursor: pointer !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+    padding: 6px !important;
+    transition: transform 0.15s ease, border-color 0.2s !important;
+    overflow: hidden !important;
+}
+
+.paged-card-item:active {
+    transform: scale(0.96) !important;
+    border-color: #38bdf8 !important;
+}
+
+.paged-card-icon {
+    font-size: clamp(38px, 9vh, 64px) !important;
+    line-height: 1 !important;
+    margin-bottom: 4px !important;
+}
+
+.paged-card-label {
+    font-size: clamp(13px, 2.5vh, 16px) !important;
+    font-weight: 900 !important;
+    color: #1e293b !important;
+    line-height: 1.1 !important;
+}
+
+.paged-card-sound-hint {
+    font-size: 10px !important;
+    font-weight: 800 !important;
+    color: #0284c7 !important;
+    background: #e0f2fe !important;
+    padding: 2px 8px !important;
+    border-radius: 9999px !important;
+    margin-top: 4px !important;
+}
+
+/* SÂN CHƠI TOA TÀU CHỮ CÁI 6 CHỮ (3x2) */
+.paged-alphabet-grid {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    grid-template-rows: repeat(2, 1fr) !important;
+    gap: 8px !important;
+    overflow: hidden !important;
+}
+
+.paged-letter-card {
+    background: #ffffff !important;
+    border: 3px solid #e2e8f0 !important;
+    border-bottom-width: 6px !important;
+    border-radius: 18px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    cursor: pointer !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04) !important;
+    padding: 6px 2px !important;
+    transition: transform 0.15s ease !important;
+}
+
+.paged-letter-card:active {
+    transform: scale(0.94) !important;
+}
+
+.paged-char-symbol {
+    font-size: clamp(32px, 7vh, 46px) !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+}
+
+.paged-char-sub {
+    font-size: 14px !important;
+    font-weight: 800 !important;
+    color: #64748b !important;
+}
+
+.paged-char-word {
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    color: #1e293b !important;
+    margin-top: 2px !important;
+}
+
+/* SÂN CHƠI MA TRẬN 6 DẤU THANH (2x3) VỪA KHÍT 1 MÀN HÌNH */
+.paged-tones-grid {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    grid-template-rows: repeat(3, 1fr) !important;
+    gap: 6px !important;
+    overflow: hidden !important;
+}
+
+.paged-tone-card {
+    background: #ffffff !important;
+    border: 2px solid #e2e8f0 !important;
+    border-top-width: 6px !important;
+    border-radius: 14px !important;
+    padding: 4px 6px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    cursor: pointer !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+}
+
+.paged-tone-card:active {
+    transform: scale(0.96) !important;
+}
+
+/* SÂN CHƠI ĐẾM SỐ KHỔNG LỒ (1 SỐ / MÀN HÌNH) */
+.single-number-stage {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    background: #ffffff !important;
+    border: 3px solid #fed7aa !important;
+    border-radius: 24px !important;
+    padding: 12px !important;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04) !important;
+}
+
+.single-num-giant {
+    font-size: clamp(64px, 14vh, 96px) !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+    margin-bottom: 2px !important;
+}
+
+.single-num-name {
+    font-size: 20px !important;
+    font-weight: 900 !important;
+    color: #1e293b !important;
+    margin-bottom: 10px !important;
+}
+
+.single-num-items-box {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    max-width: 320px !important;
+}
+
+.single-num-dot {
+    font-size: clamp(28px, 6vh, 42px) !important;
+    cursor: pointer !important;
+    transition: transform 0.15s ease !important;
+}
+
+.single-num-dot:active {
+    transform: scale(1.3) rotate(15deg) !important;
+}
+
+/* MODAL POPOVER CHỌN CHỦ ĐỀ / NGUYÊN ÂM / PHỤ ÂM 1 CHẠM */
+.zero-scroll-modal-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: rgba(15, 23, 42, 0.75) !important;
+    backdrop-filter: blur(8px) !important;
+    z-index: 9999 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 14px !important;
+}
+
+.zero-scroll-modal-card {
+    background: #ffffff !important;
+    border: 4px solid #38bdf8 !important;
+    border-radius: 24px !important;
+    width: 100% !important;
+    max-width: 440px !important;
+    max-height: 85vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 16px 14px !important;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3) !important;
+    animation: popModal 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+@keyframes popModal {
+    from { opacity: 0; transform: scale(0.85); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.modal-header-row {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    margin-bottom: 12px !important;
+    border-bottom: 2px solid #e2e8f0 !important;
+    padding-bottom: 8px !important;
+}
+
+.modal-header-title {
+    font-size: 17px !important;
+    font-weight: 900 !important;
+    color: #0369a1 !important;
+}
+
+.modal-close-btn {
+    background: #fee2e2 !important;
+    color: #ef4444 !important;
+    border: none !important;
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 50% !important;
+    font-size: 16px !important;
+    font-weight: 900 !important;
+    cursor: pointer !important;
+}
+
+.modal-grid-palette {
+    flex: 1 1 auto !important;
+    overflow-y: auto !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px !important;
+    padding: 4px 2px !important;
+}
+
+.palette-item-btn {
+    background: #f8fafc !important;
+    border: 2px solid #e2e8f0 !important;
+    border-radius: 16px !important;
+    padding: 10px 4px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    cursor: pointer !important;
+    transition: all 0.15s !important;
+}
+
+.palette-item-btn.active {
+    background: #fef08a !important;
+    border-color: #f59e0b !important;
+    transform: scale(1.05) !important;
+}
+
+.palette-icon {
+    font-size: 26px !important;
+}
+
+.palette-label {
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    color: #1e293b !important;
+    margin-top: 2px !important;
+}
+
+/* ========================================================
+   ZERO-SCROLL ENHANCEMENTS FOR VISUAL ZONE & MATH
+   ======================================================== */
+
+.single-screen-question-box {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    flex: 1 1 auto !important;
+    gap: 6px !important;
+    overflow: hidden !important;
+}
+
+.giant-question-header {
+    flex: 0 0 auto !important;
+    padding: 6px 12px !important;
+    gap: 10px !important;
+    border-radius: 16px !important;
+    border-width: 2px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+    margin-bottom: 2px !important;
+}
+
+.voice-btn-giant {
+    padding: 6px 12px !important;
+    font-size: 11px !important;
+    gap: 6px !important;
+    border-radius: 9999px !important;
+}
+
+.giant-speaker-icon {
+    font-size: 20px !important;
+}
+
+.giant-speaker-label {
+    font-size: 11px !important;
+    font-weight: 900 !important;
+}
+
+.question-meta-tag {
+    font-size: 10px !important;
+    margin-bottom: 2px !important;
+}
+
+.question-title-giant {
+    font-size: clamp(14px, 2.8vh, 18px) !important;
+    line-height: 1.2 !important;
+}
+
+.giant-pairwise-grid {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+    overflow: hidden !important;
+}
+
+.giant-pairwise-card {
+    border-radius: 18px !important;
+    padding: 6px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.giant-pairwise-emoji {
+    font-size: clamp(40px, 9vh, 64px) !important;
+}
+
+.giant-pairwise-name {
+    font-size: clamp(12px, 2.2vh, 16px) !important;
+    font-weight: 900 !important;
+    margin-top: 4px !important;
+}
+
+.giant-four-grid {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    grid-template-rows: repeat(2, 1fr) !important;
+    gap: 6px !important;
+    overflow: hidden !important;
+}
+
+.giant-four-card {
+    border-radius: 16px !important;
+    padding: 4px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.giant-card-emoji {
+    font-size: clamp(32px, 7vh, 48px) !important;
+    line-height: 1 !important;
+}
+
+.giant-card-name {
+    font-size: clamp(11px, 2vh, 14px) !important;
+    font-weight: 800 !important;
+    margin-top: 2px !important;
+}
+
+.card-pick-tag {
+    font-size: 9px !important;
+    padding: 1px 6px !important;
+}
+
+.giant-footer-row {
+    flex: 0 0 auto !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 6px !important;
+    height: 38px !important;
+    padding: 2px 4px !important;
+}
+
+.giant-feedback-bar {
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    padding: 4px 8px !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+}
+
+.pill-next-giant {
+    font-size: 11px !important;
+    padding: 6px 14px !important;
+    border-radius: 9999px !important;
+    white-space: nowrap !important;
+}
+
+.class-modes-bar-compact {
+    flex: 0 0 auto !important;
+    display: flex !important;
+    gap: 4px !important;
+    overflow-x: auto !important;
+    padding: 2px 0 !important;
+    margin-bottom: 4px !important;
+    white-space: nowrap !important;
+    -webkit-overflow-scrolling: touch !important;
+}
+
+.mode-tab-pill {
+    font-size: 11px !important;
+    padding: 4px 10px !important;
+    border-radius: 9999px !important;
+}
+
+.one-screen-stage {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+}
+
+/* KHÓA CỨNG TOÀN DIỆN CHO MÀN CHƠI KHÔNG CUỘN */
+#game-content, #images-content, #letters-content, #numbers-content, #visual-content, #treasure-content {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+}
+
+/* ========================================================
+   DESKTOP APP LAYOUT LOCKDOWN (ZERO-SCROLL)
+   ======================================================== */
+.ked-header {
+    flex: 0 0 auto !important;
+    height: 56px !important;
+    padding: 6px 16px !important;
+}
+
+.app-layout {
+    display: flex !important;
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: calc(100dvh - 56px) !important;
+    width: 100% !important;
+    overflow: hidden !important;
+}
+
+.ked-sidebar {
+    flex: 0 0 auto !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    width: 220px !important;
+    padding: 8px 6px !important;
+}
+
+.sidebar-nav-btn {
+    padding: 8px 10px !important;
+    margin-bottom: 6px !important;
+    min-height: 52px !important;
+}
+
+.nav-icon {
+    font-size: 24px !important;
+}
+
+.nav-main-title {
+    font-size: 14px !important;
+}
+
+.nav-sub-desc {
+    font-size: 10px !important;
+}

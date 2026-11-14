@@ -1,14 +1,15 @@
 /**
- * KED - Images Zone v6.3 (VƯƠNG QUỐC HÌNH ẢNH & KHÁM PHÁ THẾ GIỚI CHO BÉ 3-5 TUỔI)
- * 1. THƯ VIỆN THẺ TRANH (356 mục, 18 chủ đề icon lớn >44px, chạm để nghe tiếng)
- * 2. BÉ TÌM HÌNH (Trò chơi trắc nghiệm 6 hình theo giọng đọc cô giáo, xáo trộn liên tục)
- * 3. TRIỆT TIÊU 100% ÂM THANH RÊ CHUỘT: Chỉ phát âm thanh khi bé bấm/chạm trực tiếp vào thẻ.
- * 4. THIẾT KẾ MENU TINH GỌN: 2 chế độ độc lập, giao diện đơn màn hình không cuộn.
+ * KED - Images Zone v7.0 (VƯƠNG QUỐC HÌNH ẢNH ZERO-SCROLL)
+ * 1. ZERO-SCROLL CAROUSEL: 4 thẻ (2x2) trên điện thoại, 6 thẻ (3x2) trên máy tính.
+ * 2. LẬT TRANG NHƯ SÁCH TRANH: Nút bấm ◀ ▶ to bản, trẻ không phải cuộn.
+ * 3. BỘ CHỌN CHỦ ĐỀ POPOVER: Nút [ 🚗 Phương tiện ▾ ] mở modal chọn 1 chạm, trả 100% không gian cho màn chơi.
+ * 4. BÉ TÌM HÌNH 1 MÀN HÌNH: 4 hình trắc nghiệm cực đại vừa khít màn hình.
  */
 
 const ImagesZone = {
     activeCategory: 'vehicles',
     viewMode: 'flashcards', // 'flashcards' | 'game'
+    flashcardPage: 0,
 
     // Bé tìm hình
     mgTargetItem: null,
@@ -26,16 +27,28 @@ const ImagesZone = {
         this.switchMode(this.viewMode || 'flashcards');
     },
 
+    getCardsPerPage() {
+        return (window.innerWidth <= 768) ? 4 : 6;
+    },
+
     renderSubMenu() {
         const subNav = document.getElementById('images-subnav');
         if (!subNav) return;
+        const cat = (typeof KED_IMAGES_DATA !== 'undefined' && KED_IMAGES_DATA.CATEGORIES[this.activeCategory]) || { name: 'Chủ Đề', icon: '🎨' };
         subNav.innerHTML = `
-            <button class="kid-pill ${this.viewMode === 'flashcards' ? 'active' : ''}" onclick="ImagesZone.switchMode('flashcards')">
-                📖 Thư Viện Thẻ Tranh (356 Mục)
-            </button>
-            <button class="kid-pill ${this.viewMode === 'game' ? 'active' : ''}" onclick="ImagesZone.switchMode('game')">
-                🔍 Bé Tìm Hình (Trắc Nghiệm 6 Hình)
-            </button>
+            <div class="zero-scroll-subbar">
+                <div class="mode-switch-group">
+                    <button class="kid-pill-compact ${this.viewMode === 'flashcards' ? 'active' : ''}" onclick="ImagesZone.switchMode('flashcards')">
+                        📖 Thư Viện
+                    </button>
+                    <button class="kid-pill-compact ${this.viewMode === 'game' ? 'active' : ''}" onclick="ImagesZone.switchMode('game')">
+                        🔍 Tìm Hình
+                    </button>
+                </div>
+                <button class="topic-picker-btn" onclick="ImagesZone.openTopicModal()" title="Chạm để đổi chủ đề">
+                    <span>${cat.icon}</span> <span>${cat.name}</span> <span style="font-size:10px;">▾</span>
+                </button>
+            </div>
         `;
         this.updateSessionCounterUI();
     },
@@ -43,9 +56,9 @@ const ImagesZone = {
     switchMode(mode) {
         if (this.isLocked) return;
         this.viewMode = mode;
-        SoundEngine.playPop();
+        if (typeof SoundEngine !== 'undefined') SoundEngine.playPop();
 
-        const pills = document.querySelectorAll('#images-subnav .kid-pill');
+        const pills = document.querySelectorAll('#images-subnav .kid-pill-compact');
         if (pills.length >= 2) {
             pills[0].classList.toggle('active', mode === 'flashcards');
             pills[1].classList.toggle('active', mode === 'game');
@@ -57,39 +70,54 @@ const ImagesZone = {
         this.render(container);
     },
 
-    filterCategory(catId, btnEl) {
+    openTopicModal() {
+        if (typeof SoundEngine !== 'undefined') SoundEngine.playPop();
+        let modal = document.getElementById('images-topic-modal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'images-topic-modal';
+            modal.className = 'zero-scroll-modal-overlay';
+            document.body.appendChild(modal);
+        }
+
+        const cats = KED_IMAGES_DATA.CATEGORIES;
+        modal.innerHTML = `
+            <div class="zero-scroll-modal-card">
+                <div class="modal-header-row">
+                    <span class="modal-header-title">🎨 CHỌN CHỦ ĐỀ KHÁM PHÁ</span>
+                    <button class="modal-close-btn" onclick="ImagesZone.closeTopicModal()">✕</button>
+                </div>
+                <div class="modal-grid-palette">
+                    ${Object.values(cats).map(c => `
+                        <button class="palette-item-btn ${this.activeCategory === c.id ? 'active' : ''}" onclick="ImagesZone.selectTopicAndClose('${c.id}')">
+                            <span class="palette-icon">${c.icon}</span>
+                            <span class="palette-label">${c.name}</span>
+                        </button>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+        modal.style.display = 'flex';
+    },
+
+    closeTopicModal() {
+        const modal = document.getElementById('images-topic-modal');
+        if (modal) modal.style.display = 'none';
+    },
+
+    selectTopicAndClose(catId) {
         this.activeCategory = catId;
-        SoundEngine.playPop();
-
-        const pills = document.querySelectorAll('.topic-icon-grid .topic-icon-btn');
-        pills.forEach(p => p.classList.remove('active'));
-        if (btnEl) btnEl.classList.add('active');
-
+        this.flashcardPage = 0;
+        if (typeof SoundEngine !== 'undefined') SoundEngine.playPop();
+        this.closeTopicModal();
+        this.renderSubMenu();
         this.renderStage();
     },
 
     render(container) {
         if (!container) container = document.getElementById('images-content');
         if (this.isLocked || !container) return;
-        const cats = KED_IMAGES_DATA.CATEGORIES;
-
-        container.innerHTML = `
-            <div class="l1-control-bar">
-                <!-- LƯỚI 18 BIỂU TƯỢNG CHỦ ĐỀ GỌN GÀNG KHÔNG CẦN CUỘN -->
-                <div class="topic-icon-grid" title="Chọn chủ đề khám phá">
-                    ${Object.values(cats).map(cat => `
-                        <button class="topic-icon-btn ${this.activeCategory === cat.id ? 'active' : ''}" 
-                                onclick="ImagesZone.filterCategory('${cat.id}', this)" 
-                                title="${cat.name}">
-                            <span class="topic-btn-icon">${cat.icon}</span>
-                        </button>
-                    `).join('')}
-                </div>
-            </div>
-
-            <div id="img-screen-stage" class="one-screen-stage"></div>
-        `;
-
+        container.innerHTML = `<div id="img-screen-stage" style="height:100%; display:flex; flex-direction:column; min-height:0; flex:1 1 auto; overflow:hidden;"></div>`;
         this.renderStage();
     },
 
@@ -104,53 +132,123 @@ const ImagesZone = {
         }
     },
 
+    // ========================================================
+    // 1. THƯ VIỆN THẺ TRANH LẬT TRANG (ZERO-SCROLL CAROUSEL)
+    // ========================================================
+    renderFlashcardsView(stage) {
+        if (!stage) stage = document.getElementById('img-screen-stage');
+        if (!stage) return;
+
+        const allItems = KED_IMAGES_DATA.ITEMS.filter(it => it.cat === this.activeCategory);
+        const cardsPerPage = this.getCardsPerPage();
+        const totalPages = Math.ceil(allItems.length / cardsPerPage) || 1;
+
+        if (this.flashcardPage >= totalPages) this.flashcardPage = 0;
+        if (this.flashcardPage < 0) this.flashcardPage = 0;
+
+        const pageItems = allItems.slice(this.flashcardPage * cardsPerPage, (this.flashcardPage + 1) * cardsPerPage);
+        const catInfo = KED_IMAGES_DATA.CATEGORIES[this.activeCategory] || { name: 'Đồ Vật', bg: '#ffffff' };
+
+        stage.innerHTML = `
+            <!-- LƯỚI 4 THẺ CỰC ĐẠI (2x2) KHÔNG CUỘN -->
+            <div class="paged-flashcards-grid">
+                ${pageItems.map(item => `
+                    <div class="paged-card-item" onclick="ImagesZone.clickFlashcard('${item.id}', this)" title="Chạm để nghe: ${item.name}">
+                        <span class="paged-card-icon">${item.icon}</span>
+                        <span class="paged-card-label">${item.name}</span>
+                        <span class="paged-card-sound-hint">🔊 Chạm để nghe</span>
+                    </div>
+                `).join('')}
+            </div>
+
+            <!-- THANH LẬT TRANG TRÁI / PHẢI TO BẢN -->
+            <div class="zero-scroll-pager">
+                <button class="pager-btn btn-prev" onclick="ImagesZone.prevFlashcardPage()" ${this.flashcardPage === 0 ? 'disabled' : ''}>
+                    ◀ Trang Trước
+                </button>
+                <span class="pager-status">Trang ${this.flashcardPage + 1} / ${totalPages} (${allItems.length} hình)</span>
+                <button class="pager-btn btn-next" onclick="ImagesZone.nextFlashcardPage()" ${this.flashcardPage >= totalPages - 1 ? 'disabled' : ''}>
+                    Trang Sau ▶
+                </button>
+            </div>
+        `;
+    },
+
+    prevFlashcardPage() {
+        if (this.flashcardPage > 0) {
+            this.flashcardPage--;
+            if (typeof SoundEngine !== 'undefined') SoundEngine.playPop();
+            this.renderFlashcardsView();
+        }
+    },
+
+    nextFlashcardPage() {
+        const allItems = KED_IMAGES_DATA.ITEMS.filter(it => it.cat === this.activeCategory);
+        const totalPages = Math.ceil(allItems.length / this.getCardsPerPage()) || 1;
+        if (this.flashcardPage < totalPages - 1) {
+            this.flashcardPage++;
+            if (typeof SoundEngine !== 'undefined') SoundEngine.playPop();
+            this.renderFlashcardsView();
+        }
+    },
+
+    clickFlashcard(itemId, cardEl) {
+        const item = KED_IMAGES_DATA.ITEMS.find(it => it.id === itemId);
+        if (!item) return;
+        if (typeof SoundEngine !== 'undefined') {
+            SoundEngine.playPop();
+            SoundEngine.playItemName(item.id);
+        }
+        if (cardEl) {
+            cardEl.classList.add('jump-anim');
+            setTimeout(() => cardEl.classList.remove('jump-anim'), 600);
+        }
+    },
+
+    // ========================================================
+    // 2. BÉ TÌM HÌNH (TRẮC NGHIỆM 4 HÌNH VỪA KHÍT MÀN HÌNH)
+    // ========================================================
     setupMiniGameRound(stage) {
         if (!stage) stage = document.getElementById('img-screen-stage');
         if (!stage || this.isLocked) return;
 
         let pool = KED_IMAGES_DATA.ITEMS.filter(it => it.cat === this.activeCategory);
-        if (pool.length < 6) {
+        if (pool.length < 4) {
             const others = KED_IMAGES_DATA.ITEMS.filter(it => it.cat !== this.activeCategory);
             pool = pool.concat(others);
         }
 
-        // XÁO TRỘN ĐÁP ÁN MỖI LẦN NẠP VÒNG CHƠI MỚI
+        const count = 4; // Cố định đúng 4 đáp án lưới 2x2 cho cả điện thoại & máy tính
         const shuffled = [...pool].sort(() => 0.5 - Math.random());
-        this.mgOptions = shuffled.slice(0, 6);
+        this.mgOptions = shuffled.slice(0, count);
         this.mgTargetItem = this.mgOptions[Math.floor(Math.random() * this.mgOptions.length)];
 
         stage.innerHTML = `
-            <div class="single-screen-question-box">
-                <div class="giant-question-header">
-                    <button class="voice-btn-giant pulse-giant" onclick="ImagesZone.playMiniGamePrompt()" title="Bé bấm để nghe lại tên cần tìm">
-                        <span class="giant-speaker-icon">🔊</span>
-                        <span class="giant-speaker-label">BÉ BẤM NGHE LẠI</span>
-                    </button>
-
-                    <div class="giant-question-text-box">
-                        <div class="question-meta-tag">
-                            🌟 Bé hãy lắng nghe và chọn đúng hình nhé! ${this.extraPenaltyQuestions > 0 ? `• <span class="challenge-pill">⚡ +${this.extraPenaltyQuestions} Câu thử thách rèn luyện</span>` : ''}
-                        </div>
-                        <h2 class="question-title-giant">
-                            Bé hãy tìm: <span class="highlight-target-giant">${this.mgTargetItem.name}</span> ở đâu nào?
-                        </h2>
+            <div style="flex:1 1 auto; min-height:0; height:100%; display:flex; flex-direction:column; justify-content:space-between; overflow:hidden;">
+                <!-- ĐỀ BÀI VÀ NÚT LOA NGHE LẠI -->
+                <div style="flex:0 0 auto; background:linear-gradient(135deg, #e0f2fe, #bae6fd); border:2px solid #0284c7; border-radius:18px; padding:8px 12px; display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px;">
+                    <div>
+                        <div style="font-size:11px; font-weight:800; color:#0369a1;">🌟 BÉ HÃY TÌM HÌNH THEO TIẾNG CÔ ĐỌC:</div>
+                        <div style="font-size:16px; font-weight:900; color:#0c4a6e;">${this.mgTargetItem.name} ở đâu nào?</div>
                     </div>
+                    <button class="pager-btn" style="background:#0284c7; color:#fff; padding:6px 14px; font-size:12px; white-space:nowrap;" onclick="ImagesZone.playMiniGamePrompt()">
+                        🔊 Nghe lại
+                    </button>
                 </div>
 
-                <!-- 6 HÌNH XÁO TRỘN VỊ TRÍ LIÊN TỤC - CLICK ONLY -->
-                <div class="giant-six-grid">
-                    ${this.mgOptions.map((opt) => `
-                        <button class="giant-choice-card bounce-hover" 
-                                onclick="ImagesZone.chooseMiniGameItem('${opt.id}', this)"
-                                title="Bé chạm vào: ${opt.name}">
-                            <span class="giant-card-emoji">${opt.icon}</span>
-                            <span class="giant-card-name">${opt.name}</span>
-                        </button>
+                <!-- LƯỚI 4 ĐÁP ÁN (2x2) CHIẾM TRỌN CHIỀU CAO CÒN LẠI -->
+                <div class="paged-flashcards-grid" id="mg-choices-box">
+                    ${this.mgOptions.map((opt, idx) => `
+                        <div class="paged-card-item" id="mg-card-${idx}" onclick="ImagesZone.chooseMiniGameItem('${opt.id}', this)">
+                            <span class="paged-card-icon">${opt.icon}</span>
+                            <span class="paged-card-label">${opt.name}</span>
+                        </div>
                     `).join('')}
                 </div>
 
-                <div id="mg-feedback-bar" class="giant-feedback-bar">
-                    <span class="fb-hint-text">💡 Bé hãy quan sát kỹ 6 hình trên và chạm vào hình đúng nhé!</span>
+                <!-- THANH PHẢN HỒI KẾT QUẢ -->
+                <div id="mg-feedback-bar" style="flex:0 0 auto; height:32px; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; color:#64748b; margin-top:4px;">
+                    💡 Bé quan sát kỹ 4 hình trên và chạm vào hình đúng nhé!
                 </div>
             </div>
         `;
@@ -160,7 +258,9 @@ const ImagesZone = {
 
     playMiniGamePrompt() {
         if (!this.mgTargetItem) return;
-        SoundEngine.playItemFind(this.mgTargetItem.id, this.mgTargetItem.name);
+        if (typeof SoundEngine !== 'undefined') {
+            SoundEngine.playItemFind(this.mgTargetItem.id, this.mgTargetItem.name);
+        }
     },
 
     chooseMiniGameItem(chosenId, btnEl) {
@@ -168,16 +268,14 @@ const ImagesZone = {
         const fb = document.getElementById('mg-feedback-bar');
 
         if (chosenId === this.mgTargetItem.id) {
-            SoundEngine.playCheer();
-            SoundEngine.playItemName(this.mgTargetItem.id);
-            if (btnEl) btnEl.classList.add('correct-glow');
+            if (typeof SoundEngine !== 'undefined') {
+                SoundEngine.playCorrect();
+                SoundEngine.playItemName(this.mgTargetItem.id);
+            }
+            if (btnEl) btnEl.style.borderColor = '#10b981';
 
             if (fb) {
-                fb.innerHTML = `
-                    <div class="fb-bubble-success bounce-in">
-                        🎉 HOAN HÔ BÉ! ĐÚNG RỒI: <strong>${this.mgTargetItem.name}</strong>! Bé thật thông minh! ⭐
-                    </div>
-                `;
+                fb.innerHTML = `🎉 <span style="color:#15803d; font-weight:900;">Đúng rồi: ${this.mgTargetItem.name}! Bé giỏi quá! ⭐</span>`;
             }
 
             if (typeof App !== 'undefined' && App.addStar) {
@@ -193,57 +291,22 @@ const ImagesZone = {
 
             setTimeout(() => {
                 this.setupMiniGameRound();
-            }, 1800);
+            }, 1600);
         } else {
-            SoundEngine.playBoing();
-            if (btnEl) btnEl.classList.add('shake-wrong');
-
+            if (typeof SoundEngine !== 'undefined') SoundEngine.playSoftNotice();
             this.extraPenaltyQuestions += 1;
             const chosen = KED_IMAGES_DATA.ITEMS.find(it => it.id === chosenId);
             const chosenName = chosen ? chosen.name : 'Hình này';
 
             if (fb) {
-                fb.innerHTML = `
-                    <div class="fb-bubble-retry shake-in">
-                        🌱 Chưa đúng rồi, đây là <strong>${chosenName}</strong> cơ! Bé hãy bấm loa nghe lại và chọn tiếp nhé! (+1 Câu rèn luyện)
-                    </div>
-                `;
+                fb.innerHTML = `🌱 <span style="color:#b91c1c;">Đây là ${chosenName} cơ! Bé thử lại nhé!</span>`;
             }
 
-            setTimeout(() => {
-                if (btnEl) btnEl.classList.remove('shake-wrong');
-            }, 700);
+            if (btnEl) {
+                btnEl.classList.add('shake-anim');
+                setTimeout(() => btnEl.classList.remove('shake-anim'), 600);
+            }
         }
-    },
-
-    renderFlashcardsView(stage) {
-        const filtered = KED_IMAGES_DATA.ITEMS.filter(it => it.cat === this.activeCategory);
-        const catInfo = KED_IMAGES_DATA.CATEGORIES[this.activeCategory] || { bg: '#ffffff', name: 'Đồ Vật' };
-
-        stage.innerHTML = `
-            <div class="flashcards-wrapper">
-                <div class="fc-header">
-                    <h3>📖 Thư Viện Thẻ Tranh: ${catInfo.name} (${filtered.length} hình)</h3>
-                    <span class="fc-tip">Bé chạm vào từng thẻ để nghe phát âm và tiếng kêu đặc trưng nhé!</span>
-                </div>
-                <div class="flashcards-grid">
-                    ${filtered.map(item => `
-                        <div class="kid-card-interactive" style="background:${catInfo.bg}" onclick="ImagesZone.clickFlashcard('${item.id}')">
-                            <span class="card-emoji bounce-hover">${item.icon}</span>
-                            <span class="card-label">${item.name}</span>
-                            <span class="sound-wave">🔊 Chạm để nghe</span>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-        `;
-    },
-
-    clickFlashcard(itemId) {
-        const item = KED_IMAGES_DATA.ITEMS.find(it => it.id === itemId);
-        if (!item) return;
-        SoundEngine.playPop();
-        SoundEngine.playVoice(`find_${itemId}`, null, `${item.name}! ${item.sound}`);
     },
 
     recordAnswerAttempt() {
@@ -261,66 +324,15 @@ const ImagesZone = {
     },
 
     updateSessionCounterUI() {
-        if (typeof App !== 'undefined' && App.updateSessionCounterUI) {
-            App.updateSessionCounterUI();
+        const counterEl = document.getElementById('lbl-session-answered');
+        if (counterEl) {
+            counterEl.textContent = this.sessionAnsweredCount;
         }
     },
 
     triggerScreenTimeLock() {
         this.isLocked = true;
-        SoundEngine.playFanfare();
-        SoundEngine.playVoice('fb_lockout');
-
-        let modal = document.getElementById('screentime-lock-modal');
-        if (!modal) {
-            modal = document.createElement('div');
-            modal.id = 'screentime-lock-modal';
-            modal.className = 'screentime-lock-overlay';
-            document.body.appendChild(modal);
-        }
-
-        const numA = Math.floor(Math.random() * 8) + 8;
-        const numB = Math.floor(Math.random() * 8) + 7;
-        this.parentGateAnswer = numA + numB;
-
-        modal.innerHTML = `
-            <div class="lock-modal-card">
-                <div class="lock-mascot-animation">😴 🦉 💤</div>
-                <h2 class="lock-title">ĐÃ ĐẾN GIỜ NGHỈ NGƠI RỒI BÉ ƠI!</h2>
-                <div class="lock-subtitle">Bé đã xuất sắc hoàn thành <span class="highlight-200">200 / 200 CÂU HỎI</span>!</div>
-                <p class="lock-message">
-                    Đôi mắt bé cần được thư giãn ít nhất 15 phút để bảo vệ thị lực. Bé hãy tạm gác máy tính, đứng dậy uống nước mát, ngắm nhìn cây xanh và vui chơi cùng bố mẹ nhé!
-                </p>
-
-                <div class="parent-gate-box">
-                    <div class="parent-gate-title">👨‍👩‍👧 Dành Cho Bố Mẹ (Mở khóa nếu muốn bé chơi tiếp)</div>
-                    <div class="parent-math-display">${numA} + ${numB} = ?</div>
-                    <div class="parent-input-row">
-                        <input type="number" id="pg-images-input" class="parent-input" placeholder="Nhập đáp án...">
-                        <button class="parent-unlock-btn" onclick="ImagesZone.verifyParentGate()">Mở Khóa</button>
-                    </div>
-                    <div id="pg-images-err" class="parent-error-msg"></div>
-                </div>
-            </div>
-        `;
-        modal.style.display = 'flex';
-    },
-
-    verifyParentGate() {
-        const inp = document.getElementById('pg-images-input');
-        const err = document.getElementById('pg-images-err');
-        if (!inp) return;
-        const val = parseInt(inp.value, 10);
-        if (val === this.parentGateAnswer) {
-            this.isLocked = false;
-            this.sessionAnsweredCount = 0;
-            this.updateSessionCounterUI();
-            const modal = document.getElementById('screentime-lock-modal');
-            if (modal) modal.style.display = 'none';
-            SoundEngine.playCheer();
-            this.switchMode(this.viewMode || 'flashcards');
-        } else {
-            if (err) err.textContent = 'Đáp án chưa chính xác, bố mẹ hãy thử lại nhé!';
-        }
+        const modal = document.getElementById('screentime-lock-modal');
+        if (modal) modal.style.display = 'flex';
     }
 };
